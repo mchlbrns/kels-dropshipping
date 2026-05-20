@@ -5,10 +5,10 @@ class CheckoutForm(forms.ModelForm):
     payment_method = forms.CharField(
         widget=forms.HiddenInput(attrs={
             'id': 'id_payment_method',
-            'value': 'cod'
+            'value': 'online'
         }),
         required=False,
-        initial='cod'
+        initial='online'
     )
 
     class Meta:
@@ -46,6 +46,6 @@ class CheckoutForm(forms.ModelForm):
     def clean_payment_method(self):
         method = self.cleaned_data.get('payment_method')
         if not method or method not in ['cod', 'online']:
-            return 'cod'
+            return 'online'  # Default to online; COD temporarily disabled
         return method
 

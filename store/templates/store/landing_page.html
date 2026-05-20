@@ -546,10 +546,10 @@
                 <div class="bg-white border border-slate-100 rounded-3xl p-6 md:p-8 shadow-xl shadow-slate-200/50">
                     <div class="mb-6">
                         <h2 class="font-display font-extrabold text-xl text-slate-900 flex items-center gap-2">
-                            🛒 Order Form (COD)
+                            🛒 Order Form
                         </h2>
                         <p class="text-xs text-slate-500 mt-1">
-                            Please fill out the delivery details below. Shipping is completely FREE!
+                            Fill in your delivery details below. Pay securely online via GCash, Maya, GrabPay, or Card.
                         </p>
                     </div>
 
@@ -595,53 +595,33 @@
                             <span class="text-[10px] text-slate-400 font-medium pl-1">House No., Street, Barangay, City, Province</span>
                         </div>
 
-                        <!-- Premium Payment Method Selection Grid -->
+                        <!-- Online Payment Only Notice -->
                         <div class="flex flex-col gap-2">
-                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1">Payment Method (Paraan ng Pagbayad)</label>
-                            
-                            <div class="grid grid-cols-2 gap-3" id="paymentMethodSelector">
-                                <!-- Option 1: COD -->
-                                <button type="button" data-method="cod" class="payment-method-card flex flex-col items-center justify-center p-4 rounded-xl border-2 border-slate-900 bg-slate-50 text-slate-900 transition-all duration-200 hover:bg-slate-50 text-center relative overflow-hidden group">
-                                    <div class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center mb-2 shadow-md">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                            <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
-                                            <line x1="2" y1="10" x2="22" y2="10"></line>
-                                        </svg>
-                                    </div>
-                                    <span class="text-xs font-extrabold uppercase tracking-wide">Cash on Delivery</span>
-                                    <span class="text-[9px] text-slate-400 font-bold mt-0.5">₱0.00 Extra Fee</span>
-                                    
-                                    <!-- Selection Indicator Badge -->
-                                    <div class="absolute top-2 right-2 w-3.5 h-3.5 bg-slate-900 rounded-full flex items-center justify-center text-white scale-100 transition-transform duration-200" id="codCheckBadge">
-                                        <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-                                            <polyline points="20 6 9 17 4 12"></polyline>
-                                        </svg>
-                                    </div>
-                                </button>
-                                
-                                <!-- Option 2: PayOnline -->
-                                <button type="button" data-method="online" class="payment-method-card flex flex-col items-center justify-center p-4 rounded-xl border-2 border-slate-100 bg-white text-slate-500 transition-all duration-200 hover:bg-slate-50 text-center relative overflow-hidden group">
-                                    <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center mb-2">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                                            <rect x="2" y="6" width="20" height="4" fill="currentColor" stroke="none"></rect>
-                                        </svg>
-                                    </div>
-                                    <span class="text-xs font-extrabold uppercase tracking-wide">Pay Online</span>
-                                    <span class="text-[9px] text-slate-400 font-bold mt-0.5">GCash / Maya / Card</span>
-                                    
-                                    <!-- Selection Indicator Badge -->
-                                    <div class="absolute top-2 right-2 w-3.5 h-3.5 bg-slate-900 rounded-full flex items-center justify-center text-white scale-0 transition-transform duration-200" id="onlineCheckBadge">
-                                        <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-                                            <polyline points="20 6 9 17 4 12"></polyline>
-                                        </svg>
-                                    </div>
-                                </button>
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1">Payment Method</label>
+
+                            <!-- Locked: Online Payment Only Card -->
+                            <div class="flex items-center gap-4 p-4 rounded-xl border-2 border-blue-500 bg-blue-50 text-blue-900">
+                                <div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-md shrink-0">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                        <rect x="2" y="6" width="20" height="4" fill="currentColor" stroke="none"></rect>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-xs font-extrabold uppercase tracking-wide">Secure Online Payment</p>
+                                    <p class="text-[10px] text-blue-600 font-semibold mt-0.5">GCash &middot; Maya &middot; GrabPay &middot; Credit / Debit Card</p>
+                                </div>
+                                <!-- Locked Check Badge -->
+                                <div class="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-white shrink-0">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </div>
                             </div>
-                            
-                            <!-- E-Wallet Supported Logos Panel -->
-                            <div class="flex items-center justify-center gap-4 bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 mt-1 transition-all duration-200 opacity-50 select-none" id="ewalletLogosPanel">
-                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Supported:</span>
+
+                            <!-- Supported Logos Panel -->
+                            <div class="flex items-center justify-center gap-3 bg-white border border-blue-100 rounded-xl px-4 py-2.5 mt-1 shadow-sm">
+                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Powered by:</span>
                                 <div class="flex gap-2">
                                     <span class="text-[10px] font-extrabold text-blue-600 tracking-tighter uppercase px-1.5 py-0.5 bg-blue-50 border border-blue-100 rounded">GCash</span>
                                     <span class="text-[10px] font-extrabold text-emerald-600 tracking-tighter uppercase px-1.5 py-0.5 bg-emerald-50 border border-emerald-100 rounded">Maya</span>
@@ -653,9 +633,10 @@
 
                         <!-- Submit CTA Button (Reserved high-contrast brandAccent color) -->
                         <button type="submit" id="confirmOrderBtn" class="animate-shine-autoplay w-full py-4 mt-2 flex items-center justify-center gap-3 bg-brandAccent hover:bg-brandAccentHover text-white font-display font-bold text-lg tracking-wide rounded-xl shadow-lg shadow-orange-500/20 active:scale-[0.97] transition-all duration-150">
-                            CONFIRM COD ORDER NOW
+                            PROCEED TO SECURE PAYMENT
                             <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                <polyline points="20 6 9 17 4 12"></polyline>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
                             </svg>
                         </button>
                     </form>
@@ -689,13 +670,14 @@
             <!-- 14. Sticky Bottom Mobile CTA (Conversions) -->
             <div class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-2xl bg-white/90 backdrop-blur-md border-t border-slate-100/80 px-6 py-4 flex items-center justify-between gap-4 z-40 shadow-[0_-8px_30px_rgba(0,0,0,0.03)] transition-all duration-300 lg:hidden">
                 <div class="flex flex-col">
-                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Total Price (COD)</span>
+                    <span class="text-[9px] font-bold text-blue-500 uppercase tracking-wider">Secure Online Price</span>
                     <span class="font-display font-extrabold text-xl text-slate-900 leading-none mt-1">{{ product.formatted_price }}</span>
                 </div>
                 <a href="#checkout-form-section" class="animate-shine-autoplay flex-grow max-w-[240px] py-3.5 px-5 flex items-center justify-center gap-2 bg-brandAccent hover:bg-brandAccentHover text-white font-display font-bold text-sm tracking-wide rounded-xl shadow-lg shadow-orange-500/15 active:scale-[0.97] transition-all duration-150">
-                    BUY NOW (COD)
+                    PAY ONLINE NOW
                     <svg class="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                        <polyline points="20 6 9 17 4 12"></polyline>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
                     </svg>
                 </a>
             </div>

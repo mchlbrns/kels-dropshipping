@@ -119,11 +119,12 @@ class StoreViewsTestCase(TestCase):
         self.assertContains(response, "Shipping time?")
 
     def test_landing_page_post_success(self):
-        """Test order submission via POST on landing page."""
+        """Test COD order submission via POST on landing page (backend still supports COD)."""
         post_data = {
             'full_name': 'Juan Dela Cruz',
             'phone_number': '09171234567',
-            'shipping_address': '123 Rizal St, Brgy 1, Pasay City'
+            'shipping_address': '123 Rizal St, Brgy 1, Pasay City',
+            'payment_method': 'cod'
         }
         response = self.client.post(reverse('store:landing_page'), post_data)
         self.assertEqual(response.status_code, 200)
@@ -161,11 +162,12 @@ class StoreViewsTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Sub Product")
 
-        # Submit order on subpage
+        # Submit order on subpage (using COD explicitly for backend test)
         post_data = {
             'full_name': 'Pedro Penduko',
             'phone_number': '09187654321',
-            'shipping_address': 'Baguio City'
+            'shipping_address': 'Baguio City',
+            'payment_method': 'cod'
         }
         response = self.client.post(reverse('store:product_detail', args=[p_sub.slug]), post_data)
         self.assertEqual(response.status_code, 200)
