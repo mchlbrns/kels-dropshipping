@@ -1,4 +1,4 @@
-from django.test import TestCase, Client
+from django.test import TestCase, Client, override_settings
 from django.urls import reverse
 from django.core.exceptions import ValidationError
 from store.models import Product, Order, Review, FAQ
@@ -238,6 +238,7 @@ class AdminDashboardTestCase(TestCase):
 from store.admin import OrderAdmin, ProductAdmin
 from django.contrib.admin.sites import AdminSite
 
+@override_settings(CJ_USE_SANDBOX=True)
 class OrderFulfillmentFidelityTestCase(TestCase):
     def setUp(self):
         self.site = AdminSite()
@@ -306,5 +307,197 @@ class OrderFulfillmentFidelityTestCase(TestCase):
         self.assertEqual(self.product.price, 1899.00)
         self.assertEqual(self.product.sku, "AG-MAX-PRO-01")
         self.assertEqual(len(messages_received), 1)
+
+
+class StorePayMongoTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.product = Product.objects.create(
+            title="AeroGlide Max Pro",
+            price=1899.00,
+            sku="AG-MAX-PRO-01",
+            is_active=True,
+            is_featured=True
+        )
+
+    def test_checkout_form_with_payment_method(self):
+        """Verify CheckoutForm initializes payment_method field correctly."""
+        form = CheckoutForm()
+        self.assertIn('payment_method', form.fields)
+
+    def test_online_payment_redirects_to_paymongo(self):
+        """Verify that choosing 'online' payment redirects the customer to PayMongo (mock url)."""
+        post_data = {
+            'full_name': 'Pedro Penduko',
+            'phone_number': '09187654321',
+            'shipping_address': 'Baguio City',
+            'payment_method': 'online'
+        }
+        response = self.client.post(reverse('store:landing_page'), post_data)
+        
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/order/payment-success/?session_id=pm_mock_sess_', response.url)
+        
+        order = Order.objects.latest('created_at')
+        self.assertEqual(order.payment_method, 'online')
+        self.assertEqual(order.payment_status, 'pending')
+        self.assertIsNotNone(order.paymongo_session_id)
+
+    def test_payment_success_callback_verifies_payment(self):
+        """Verify that payment_success view retrieves checkout session, updates payment status to paid."""
+        order = Order.objects.create(
+            product=self.product,
+            full_name='Samantha P.',
+            phone_number='09171234567',
+            shipping_address='Cebu City',
+            payment_method='online',
+            payment_status='pending',
+            paymongo_session_id='pm_mock_sess_99_12345'
+        )
+        
+        response = self.client.get(reverse('store:payment_success'), {'session_id': 'pm_mock_sess_99_12345'})
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Thank You For Your Payment!")
+        self.assertContains(response, "#KELS-ORDER-")
+        
+        order.refresh_from_db()
+        self.assertEqual(order.payment_status, 'paid')
+        self.assertIsNotNone(order.paymongo_payment_intent_id)
+
+    def test_payment_success_callback_invalid_session(self):
+        """Verify callback handles invalid sessions gracefully by redirecting to shop."""
+        response = self.client.get(reverse('store:payment_success'))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('store:store_catalog'))
+
+
+from django.core.cache import cache
+from django.test import override_settings
+import json
+
+class StorePhase3AutomationTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.product = Product.objects.create(
+            title="Premium Gaming Mouse",
+            price=1899.00,
+            sku="AG-MAX-PRO-01",
+            cj_product_id="cj_prod_id_abc123",
+            is_active=True
+        )
+        cache.clear()
+
+    @override_settings(CJ_USE_SANDBOX=True)
+    def test_paymongo_webhook_paid_event(self):
+        """Verify that PayMongo webhook for checkout session paid updates order & dispatches to CJ."""
+        order = Order.objects.create(
+            product=self.product,
+            full_name='Juan Dela Cruz',
+            phone_number='09176543210',
+            shipping_address='Manila',
+            payment_method='online',
+            payment_status='pending',
+            paymongo_session_id='cs_session_xyz123'
+        )
+
+        webhook_payload = {
+            "data": {
+                "attributes": {
+                    "type": "checkout_session.payment.paid",
+                    "data": {
+                        "id": "cs_session_xyz123",
+                        "attributes": {
+                            "status": "payment_success",
+                            "payments": [
+                                {
+                                    "id": "pay_intent_9988",
+                                    "attributes": {
+                                        "status": "paid"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+
+        response = self.client.post(
+            reverse('store:paymongo_webhook'),
+            data=json.dumps(webhook_payload),
+            content_type='application/json'
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, b"OK")
+
+        order.refresh_from_db()
+        self.assertEqual(order.payment_status, 'paid')
+        self.assertEqual(order.paymongo_payment_intent_id, 'pay_intent_9988')
+        
+        # In mock sandbox mode, this should have automatically fulfilled the order
+        self.assertEqual(order.fulfillment_status, 'fulfilled')
+        self.assertIsNotNone(order.cj_order_id)
+
+    @override_settings(CJ_USE_SANDBOX=True, CJ_AUTO_FULFILL_COD=True)
+    def test_auto_fulfillment_cod_enabled(self):
+        """Verify that when CJ_AUTO_FULFILL_COD is True, checkout dispatches COD instantly to CJ."""
+        post_data = {
+            'full_name': 'Maria Clara',
+            'phone_number': '09181112233',
+            'shipping_address': 'Vigan, Ilocos Sur',
+            'payment_method': 'cod'
+        }
+        response = self.client.post(reverse('store:landing_page'), post_data)
+        self.assertEqual(response.status_code, 200)
+        
+        order = Order.objects.latest('created_at')
+        self.assertEqual(order.fulfillment_status, 'fulfilled')
+        self.assertIsNotNone(order.cj_order_id)
+
+    @override_settings(CJ_USE_SANDBOX=True, CJ_AUTO_FULFILL_COD=False)
+    def test_auto_fulfillment_cod_disabled(self):
+        """Verify that when CJ_AUTO_FULFILL_COD is False, checkout does NOT dispatch COD automatically."""
+        post_data = {
+            'full_name': 'Maria Clara',
+            'phone_number': '09181112233',
+            'shipping_address': 'Vigan, Ilocos Sur',
+            'payment_method': 'cod'
+        }
+        response = self.client.post(reverse('store:landing_page'), post_data)
+        self.assertEqual(response.status_code, 200)
+        
+        order = Order.objects.latest('created_at')
+        self.assertEqual(order.fulfillment_status, 'pending')
+        self.assertIsNone(order.cj_order_id)
+
+    @override_settings(CJ_USE_SANDBOX=True)
+    def test_product_stock_api_caching(self):
+        """Verify product stock API returns count and correctly caches the value."""
+        # Clean cache
+        cache_key = f"cj_stock_{self.product.sku}"
+        self.assertIsNone(cache.get(cache_key))
+
+        # First request (queries CJ - mocked)
+        response1 = self.client.get(reverse('store:product_stock_api', args=[self.product.slug]))
+        self.assertEqual(response1.status_code, 200)
+        data1 = response1.json()
+        self.assertTrue(data1['success'])
+        stock_val = data1['stock']
+        self.assertGreaterEqual(stock_val, 0)
+
+        # Check cache was populated
+        self.assertEqual(cache.get(cache_key), stock_val)
+
+        # Modify product stock directly in cache to verify cache hits
+        cache.set(cache_key, 9999, 600)
+        
+        # Second request (must be a cache hit)
+        response2 = self.client.get(reverse('store:product_stock_api', args=[self.product.slug]))
+        self.assertEqual(response2.status_code, 200)
+        data2 = response2.json()
+        self.assertEqual(data2['stock'], 9999)
+
 
 

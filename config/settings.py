@@ -147,3 +147,11 @@ CJ_API_KEY = os.environ.get('CJ_API_KEY', '')
 CJ_ACCESS_TOKEN = os.environ.get('CJ_ACCESS_TOKEN', '')
 CJ_USE_SANDBOX = os.environ.get('CJ_USE_SANDBOX', 'True').lower() == 'true'
 
+# PayMongo configuration
+PAYMONGO_SECRET_KEY = os.environ.get('PAYMONGO_SECRET_KEY', 'pm_mock_secret_key')
+PAYMONGO_WEBHOOK_SECRET = os.environ.get('PAYMONGO_WEBHOOK_SECRET', '')
+
+# Fulfillment Automations
+CJ_AUTO_FULFILL_PAID = os.environ.get('CJ_AUTO_FULFILL_PAID', 'True').lower() == 'true'
+CJ_AUTO_FULFILL_COD = os.environ.get('CJ_AUTO_FULFILL_COD', 'False').lower() == 'true'
+

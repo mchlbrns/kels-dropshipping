@@ -205,6 +205,17 @@ class Order(models.Model):
         ('failed', 'Failed'),
     ]
 
+    PAYMENT_METHOD_CHOICES = [
+        ('cod', 'Cash on Delivery (COD)'),
+        ('online', 'Pay Online (E-Wallet / Card)'),
+    ]
+
+    PAYMENT_STATUS_CHOICES = [
+        ('pending', 'Pending Payment'),
+        ('paid', 'Paid'),
+        ('failed', 'Failed Payment'),
+    ]
+
     product = models.ForeignKey(
         Product, 
         on_delete=models.CASCADE, 
@@ -246,6 +257,34 @@ class Order(models.Model):
         blank=True,
         null=True,
         verbose_name="Fulfilled At"
+    )
+    payment_method = models.CharField(
+        max_length=20,
+        choices=PAYMENT_METHOD_CHOICES,
+        default='cod',
+        verbose_name="Payment Method",
+        help_text="Selected payment method for the order"
+    )
+    payment_status = models.CharField(
+        max_length=20,
+        choices=PAYMENT_STATUS_CHOICES,
+        default='pending',
+        verbose_name="Payment Status",
+        help_text="Payment transaction completion state"
+    )
+    paymongo_session_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name="PayMongo Session ID",
+        help_text="Redirection checkout session key from PayMongo"
+    )
+    paymongo_payment_intent_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name="PayMongo Payment Intent ID",
+        help_text="Transaction reference returned upon successful e-wallet capture"
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
