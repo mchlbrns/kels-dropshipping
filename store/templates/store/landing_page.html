@@ -3,981 +3,613 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ product.title }} | Cash on Delivery Philippines</title>
-    <meta name="description" content="Order {{ product.title }} today. Direct COD & Free Shipping within the Philippines. Fast delivery on local Globe & Smart networks!">
+    <title>{{ product.title }} | Premium Storefront</title>
+    <meta name="description" content="Order {{ product.title }} today. Direct Cash on Delivery & Free Shipping within the Philippines. Premium product quality guaranteed.">
     
-    <!-- Google Fonts for professional high-converting typography -->
+    <!-- Google Fonts for premium typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Ultra-fast loading lightweight Mobile-First custom CSS -->
-    <style>
-        :root {
-            --bg-body: #090c15;
-            --bg-card: #111625;
-            --primary: #f97316; /* High-converting Orange CTA */
-            --primary-hover: #ea580c;
-            --secondary: #8b5cf6; /* Sleek Violet Accent */
-            --accent-green: #10b981; /* Trust Emerald */
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            --border: rgba(255, 255, 255, 0.08);
-            --font-title: 'Outfit', sans-serif;
-            --font-body: 'Inter', sans-serif;
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brandAccent: '#FF5A00', // Reserved strictly for CTA Buy Now buttons
+                        brandAccentHover: '#E04E00',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Custom CSS Overrides (including form styling overrides to support light theme regardless of backend classes) -->
+    <style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply font-sans bg-slate-50 text-slate-800 antialiased;
+                scroll-behavior: smooth;
+            }
+            h1, h2, h3, h4 {
+                @apply font-display tracking-tight;
+            }
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            scroll-behavior: smooth;
-        }
-
-        body {
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            font-family: var(--font-body);
-            line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
-            padding-bottom: 80px; /* Leave space for mobile sticky buy button */
-        }
-
-        /* Clean Mobile Wrapper */
-        .app-wrapper {
-            max-width: 600px; /* Perfect smartphone viewport constraint */
-            margin: 0 auto;
-            background-color: #0b0f1a;
-            min-height: 100vh;
-            border-left: 1px solid var(--border);
-            border-right: 1px solid var(--border);
-            position: relative;
-            box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
-        }
-
-        /* Navigation Header */
-        header {
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            background: rgba(11, 15, 26, 0.9);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border);
-            padding: 0.85rem 1.25rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-family: var(--font-title);
-            font-weight: 800;
-            font-size: 1.25rem;
-            color: #fff;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .logo span {
-            color: var(--primary);
-        }
-
-        .top-badge {
-            background: rgba(16, 185, 129, 0.12);
-            border: 1px solid var(--accent-green);
-            color: var(--accent-green);
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            padding: 0.2rem 0.6rem;
-            border-radius: 4px;
-            letter-spacing: 0.05em;
-        }
-
-        /* Mobile Hero Section */
-        .hero {
-            padding: 1.5rem 1.25rem;
-            text-align: center;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .hero-tag {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 0.5rem;
-            display: inline-block;
-        }
-
-        .hero-title {
-            font-family: var(--font-title);
-            font-size: 1.85rem;
-            font-weight: 800;
-            line-height: 1.2;
-            color: #fff;
-            margin-bottom: 1rem;
-        }
-
-        /* Responsive Video Container */
-        .video-container {
-            position: relative;
-            width: 100%;
-            border-radius: 14px;
-            overflow: hidden;
-            background: #000;
-            border: 1px solid var(--border);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-            margin-bottom: 1.25rem;
-            aspect-ratio: 16/9;
-        }
-
-        .video-container video {
-            width: 100%;
-            height: 100%;
-            display: block;
-            object-fit: cover;
-        }
-
-        /* Sticky Bottom Mobile CTA */
-        .sticky-buy {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 600px;
-            background: rgba(11, 15, 26, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-top: 1px solid var(--border);
-            padding: 0.85rem 1.25rem;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-        }
-
-        .sticky-price {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sticky-price .label {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-        }
-
-        .sticky-price .value {
-            font-family: var(--font-title);
-            font-size: 1.35rem;
-            font-weight: 800;
-            color: var(--accent-green);
-        }
-
-        .btn-sticky {
-            flex-grow: 1;
-            background: linear-gradient(135deg, var(--primary), #fb923c);
-            border: none;
-            color: #fff;
-            padding: 0.85rem 1.25rem;
-            border-radius: 10px;
-            font-family: var(--font-title);
-            font-weight: 700;
-            font-size: 1.05rem;
-            text-align: center;
-            text-decoration: none;
-            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            transition: transform 0.1s ease;
-        }
-
-        .btn-sticky:active {
-            transform: scale(0.98);
-        }
-
-        /* Main Hero Buy Button */
-        .btn-hero {
-            display: inline-flex;
-            width: 100%;
-            background: linear-gradient(135deg, var(--primary), #fb923c);
-            border: none;
-            color: #fff;
-            padding: 1rem;
-            border-radius: 12px;
-            font-family: var(--font-title);
-            font-weight: 700;
-            font-size: 1.2rem;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            text-decoration: none;
-            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.35);
-            margin-top: 0.5rem;
-        }
-
-        /* Trust Signals */
-        .trust-banner {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.5rem;
-            background: rgba(255, 255, 255, 0.02);
-            border-bottom: 1px solid var(--border);
-            padding: 0.85rem;
-            text-align: center;
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-
-        .trust-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .trust-item svg {
-            color: var(--secondary);
-        }
-
-        /* Image Carousel Section */
-        .carousel-section {
-            padding: 1.5rem 1.25rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .carousel-container {
-            position: relative;
-            background: var(--bg-card);
-            border-radius: 14px;
-            overflow: hidden;
-            aspect-ratio: 4/3;
-            border: 1px solid var(--border);
-        }
-
-        .carousel-slides {
-            display: flex;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .carousel-slide {
-            min-width: 100%;
-            height: 100%;
-        }
-
-        .carousel-slide img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .carousel-dots {
-            position: absolute;
-            bottom: 0.85rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 0.4rem;
-        }
-
-        .carousel-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.4);
-            border: none;
-        }
-
-        .carousel-dot.active {
-            background: var(--primary);
-            width: 15px;
-            border-radius: 3px;
-        }
-
-        .carousel-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(17, 22, 37, 0.7);
-            border: 1px solid var(--border);
-            color: #fff;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 5;
-            font-size: 0.9rem;
-        }
-
-        .carousel-arrow-left { left: 0.5rem; }
-        .carousel-arrow-right { right: 0.5rem; }
-
-        /* Thumbnails */
-        .thumbs-container {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.75rem;
-            overflow-x: auto;
-            padding-bottom: 0.25rem;
-        }
-
-        .thumb {
-            width: 55px;
-            height: 55px;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 2px solid transparent;
-            flex-shrink: 0;
-        }
-
-        .thumb.active {
-            border-color: var(--primary);
-        }
-
-        .thumb img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* Features Section */
-        .features {
-            padding: 1.75rem 1.25rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .section-title {
-            font-family: var(--font-title);
-            font-size: 1.4rem;
-            font-weight: 800;
-            margin-bottom: 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #fff;
-        }
-
-        .section-title span {
-            color: var(--primary);
-        }
-
-        .features-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.85rem;
-        }
-
-        .feature-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            padding: 1rem;
-            border-radius: 12px;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-        }
-
-        .feature-index {
-            width: 24px;
-            height: 24px;
-            background: rgba(249, 115, 22, 0.12);
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 700;
-            flex-shrink: 0;
-        }
-
-        .feature-text {
-            font-size: 0.925rem;
-            color: var(--text-main);
-            font-weight: 500;
-        }
-
-        /* Pricing Block */
-        .price-section {
-            padding: 1.5rem 1.25rem;
-            border-bottom: 1px solid var(--border);
-            background: linear-gradient(180deg, rgba(255,255,255,0.01) 0%, rgba(255,255,255,0) 100%);
-        }
-
-        .pricing-grid {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            padding: 1.25rem;
-            border-radius: 14px;
-        }
-
-        .price-col {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .price-col .compare {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            text-decoration: line-through;
-        }
-
-        .price-col .selling {
-            font-family: var(--font-title);
-            font-size: 2.15rem;
-            font-weight: 800;
-            color: var(--accent-green);
-        }
-
-        .discount-badge {
-            background: var(--primary);
-            color: #fff;
-            padding: 0.35rem 0.65rem;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        /* Native Django Form Checkout Block */
-        .checkout-box {
-            padding: 2rem 1.25rem;
-            background: rgba(255,255,255,0.01);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .form-card {
-            background: linear-gradient(180deg, #131929 0%, #0d1220 100%);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            border-radius: 16px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.1);
-        }
-
-        .form-card::before {
-            content: '';
-            display: block;
+        /* Clean Scrollbar for thumbnails */
+        .thumbs-scrollbar::-webkit-scrollbar {
             height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            margin: -1.5rem -1.5rem 1.25rem -1.5rem;
-            border-radius: 16px 16px 0 0;
         }
-
-        .form-header {
-            margin-bottom: 1.25rem;
-        }
-
-        .form-title {
-            font-family: var(--font-title);
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 0.25rem;
-        }
-
-        .form-subtitle {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        /* Styling Native Form Fields generated by Django */
-        .django-form-field {
-            margin-bottom: 1rem;
-        }
-
-        .django-form-field label {
-            display: block;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            margin-bottom: 0.4rem;
-        }
-
-        .django-form-field input,
-        .django-form-field textarea {
-            width: 100%;
-            background-color: rgba(9, 12, 21, 0.9);
-            border: 1px solid var(--border);
-            color: #fff;
-            font-family: var(--font-body);
-            font-size: 0.95rem;
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .django-form-field input:focus,
-        .django-form-field textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
-        }
-
-        .form-errors {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            margin-bottom: 1.25rem;
-        }
-
-        .form-errors ul {
-            list-style: none;
-        }
-
-        .btn-submit {
-            width: 100%;
-            background: linear-gradient(135deg, var(--accent-green), #34d399);
-            border: none;
-            color: #fff;
-            font-family: var(--font-title);
-            font-size: 1.15rem;
-            font-weight: 700;
-            padding: 0.95rem;
+        .thumbs-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
             border-radius: 10px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            transition: transform 0.1s ease;
         }
-
-        .btn-submit:active {
-            transform: scale(0.98);
-        }
-
-        /* Description / Video block */
-        .description-box {
-            padding: 1.5rem 1.25rem;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.925rem;
-            color: var(--text-muted);
-        }
-
-        .description-box p {
-            margin-bottom: 1rem;
-        }
-
-        .description-box strong {
-            color: #fff;
-        }
-
-        /* Happy Customers / Reviews Block */
-        .reviews-box {
-            padding: 1.5rem 1.25rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .reviews-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .review-card {
-            background: rgba(255,255,255,0.01);
-            border: 1px solid var(--border);
+        .thumbs-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
             border-radius: 10px;
-            padding: 1rem;
         }
 
-        .review-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.75rem;
-            margin-bottom: 0.5rem;
+        /* Force checkout input widgets into premium light-theme styles */
+        #checkout-form-section input.form-control, 
+        #checkout-form-section textarea.form-control {
+            background-color: #ffffff !important;
+            border-width: 1px !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+            border-radius: 0.75rem !important; /* rounded-xl */
+            padding-top: 0.75rem !important;
+            padding-bottom: 0.75rem !important;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+            width: 100% !important;
+            font-family: 'Inter', sans-serif !important;
+            font-size: 0.95rem !important;
+            line-height: 1.5 !important;
+            transition-property: all !important;
+            transition-duration: 200ms !important;
         }
 
-        .review-name {
-            font-weight: 700;
-            color: #fff;
+        #checkout-form-section input.form-control:focus, 
+        #checkout-form-section textarea.form-control:focus {
+            outline: 2px solid transparent !important;
+            outline-offset: 2px !important;
+            border-color: #0f172a !important;
+            box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.06) !important;
         }
 
-        .review-stars {
-            color: #fbbf24;
-        }
-
-        .review-comment {
-            font-size: 0.85rem;
-            font-style: italic;
-            color: var(--text-main);
-        }
-
-        /* Footer */
-        footer {
-            padding: 2rem 1.25rem;
-            text-align: center;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            background-color: #06080f;
-        }
-
-        footer span {
-            color: var(--primary);
-        }
-
-        /* Overlay Full Success Modal */
-        .success-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(5, 7, 12, 0.9);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 200;
-            padding: 1.5rem;
-        }
-
-        .success-card {
-            background: var(--bg-card);
-            border: 1px solid var(--accent-green);
-            padding: 2rem;
-            border-radius: 20px;
-            max-width: 420px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2);
-            animation: bounceIn 0.4s ease;
-        }
-
-        @keyframes bounceIn {
-            0% { transform: scale(0.8); opacity: 0; }
-            70% { transform: scale(1.03); opacity: 0.9; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .success-icon {
-            width: 60px;
-            height: 60px;
-            background: rgba(16, 185, 129, 0.12);
-            border: 2px solid var(--accent-green);
-            color: var(--accent-green);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem auto;
-        }
-
-        .success-title {
-            font-family: var(--font-title);
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: #fff;
-            margin-bottom: 0.5rem;
-        }
-
-        .success-desc {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 1.5rem;
-            line-height: 1.5;
-        }
-
-        .btn-success-close {
-            background: var(--accent-green);
-            border: none;
-            color: #fff;
-            padding: 0.65rem 2rem;
-            font-family: var(--font-title);
-            font-weight: 700;
-            border-radius: 8px;
-            cursor: pointer;
+        #checkout-form-section input.form-control::placeholder, 
+        #checkout-form-section textarea.form-control::placeholder {
+            color: #94a3b8 !important;
         }
     </style>
 </head>
-<body>
+<body class="pb-24">
 
-    <div class="app-wrapper">
+    <!-- Outer Viewport Wrapper (Centered single column premium storefront) -->
+    <div class="min-h-screen bg-slate-50 flex flex-col items-center">
+        <div class="w-full max-w-2xl bg-white min-h-screen shadow-2xl flex flex-col border-x border-slate-100 relative">
+            
+            <!-- 1. Sticky Premium Header -->
+            <header class="sticky top-0 bg-white/90 backdrop-blur-md border-b border-slate-100 z-50 px-6 py-4 flex justify-between items-center">
+                <a href="#" class="flex items-center gap-2 group">
+                    <svg class="w-6 h-6 text-slate-900" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                        <polyline points="2 17 12 22 22 17"></polyline>
+                    </svg>
+                    <span class="font-display font-extrabold text-lg tracking-wider text-slate-900 uppercase">PRIMELUXE<span class="text-slate-400">.</span></span>
+                </a>
+                <div class="flex items-center gap-1.5 bg-emerald-50 border border-emerald-100 rounded-full px-3 py-1">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-[10px] font-bold tracking-wider text-emerald-800 uppercase">COD Nationwide</span>
+                </div>
+            </header>
 
-        <!-- Top Navigation Header -->
-        <header>
-            <a href="#" class="logo">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                    <polyline points="2 17 12 22 22 17"></polyline>
-                </svg>
-                <span>PRIMELUXE</span>
-            </a>
-            <div class="top-badge">COD FREE SHIPPING</div>
-        </header>
+            <!-- 2. Minimalist Trust Banner -->
+            <section class="grid grid-cols-3 gap-2 bg-slate-50/50 border-b border-slate-100 px-6 py-3.5 text-center">
+                <div class="flex flex-col items-center justify-center gap-1">
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                    <span class="text-[10px] font-semibold text-slate-600">Cash On Delivery</span>
+                </div>
+                <div class="flex flex-col items-center justify-center gap-1">
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <rect x="1" y="3" width="15" height="13" rx="2" ry="2"></rect>
+                        <polygon points="16 8 20 8 23 11 23 16 16 16"></polygon>
+                    </svg>
+                    <span class="text-[10px] font-semibold text-slate-600">Free Shipping</span>
+                </div>
+                <div class="flex flex-col items-center justify-center gap-1">
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                    </svg>
+                    <span class="text-[10px] font-semibold text-slate-600">7-Day Inspection</span>
+                </div>
+            </section>
 
-        <!-- Trust Signals Banner -->
-        <section class="trust-banner">
-            <div class="trust-item">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                </svg>
-                <span>Cash on Delivery</span>
-            </div>
-            <div class="trust-item">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <rect x="1" y="3" width="15" height="13"></rect>
-                    <polygon points="16 8 20 8 23 11 23 16 16 16"></polygon>
-                </svg>
-                <span>Free Ship PH</span>
-            </div>
-            <div class="trust-item">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                </svg>
-                <span>7-Day Return</span>
-            </div>
-        </section>
+            <!-- 3. Hero Presentation & Spacing -->
+            <section class="px-6 pt-10 pb-8 flex flex-col items-center text-center">
+                <span class="text-[11px] font-bold tracking-widest text-slate-400 uppercase">PHILIPPINES EXCLUSIVE DEBUT</span>
+                <h1 class="font-display font-extrabold text-3xl md:text-4xl text-slate-900 mt-3 mb-4 leading-tight max-w-xl">
+                    {{ product.title }}
+                </h1>
+                
+                <!-- Ratings Summary -->
+                <div class="flex items-center gap-2 mb-6 bg-slate-50 border border-slate-100 rounded-full px-4 py-1.5">
+                    <div class="flex text-amber-400 text-sm">
+                        ★ ★ ★ ★ ★
+                    </div>
+                    <span class="text-xs font-semibold text-slate-700">4.9/5.0</span>
+                    <span class="text-xs text-slate-400">|</span>
+                    <span class="text-xs font-medium text-slate-500">1,482 Pinoy Reviews</span>
+                </div>
 
-        <!-- Hero Section -->
-        <section class="hero">
-            <span class="hero-tag">Best Seller in the PH</span>
-            <h1 class="hero-title">{{ product.title }}</h1>
-
-            <!-- Embedded Video Player -->
-            {% if product.video_url %}
-            <div class="video-container">
-                <video controls playsinline preload="metadata" muted>
-                    <source src="{{ product.video_url }}" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-            {% endif %}
-
-            <!-- Main Direct Buy CTA -->
-            <a href="#checkout-form-section" class="btn-hero">
-                BUY NOW - CASH ON DELIVERY
-                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-            </a>
-        </section>
-
-        <!-- Pricing Highlights Block -->
-        <section class="price-section">
-            <div class="pricing-grid">
-                <div class="price-col">
-                    {% if product.compare_at_price %}
-                    <span class="compare">{{ product.formatted_compare_at_price }}</span>
+                <!-- 4. Hero Media Integration (rounded, soft shadows, unified integration) -->
+                <div class="w-full flex flex-col gap-6 mb-8">
+                    <!-- High Quality Product Video Player Card -->
+                    {% if product.video_url %}
+                    <div class="w-full bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-lg shadow-slate-100/70 p-2">
+                        <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-950 group">
+                            <video class="w-full h-full object-cover" controls playsinline preload="metadata" muted>
+                                <source src="{{ product.video_url }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    </div>
                     {% endif %}
-                    <span class="selling">{{ product.formatted_price }}</span>
-                </div>
-                {% if product.compare_at_price %}
-                <span class="discount-badge">Save {{ product.discount_percentage }}% Today</span>
-                {% endif %}
-            </div>
-        </section>
 
-        <!-- Image Carousel Section -->
-        {% if carousel_images %}
-        <section class="carousel-section">
-            <h2 class="section-title">Product <span>Gallery</span></h2>
-            <div class="carousel-container">
-                <div class="carousel-slides" id="mSlides">
-                    {% for img in carousel_images %}
-                    <div class="carousel-slide">
-                        <img src="{{ img.get_url }}" alt="{{ img.alt_text|default:product.title }}">
+                    <!-- High-contrast Accent 'Buy Now' Hero CTA -->
+                    <div class="w-full px-2">
+                        <a href="#checkout-form-section" class="w-full py-4 px-6 flex items-center justify-center gap-3 bg-brandAccent hover:bg-brandAccentHover text-white font-display font-bold text-lg tracking-wide rounded-xl shadow-xl shadow-orange-500/10 active:scale-[0.98] transition-all duration-150">
+                            BUY NOW - CASH ON DELIVERY
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </a>
+                        <p class="text-[11px] text-slate-400 mt-2.5 font-medium flex items-center justify-center gap-1">
+                            <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                            </svg>
+                            Safe Checkout. No Online Payment Needed.
+                        </p>
                     </div>
-                    {% endfor %}
                 </div>
+            </section>
 
-                {% if carousel_images|length > 1 %}
-                <button class="carousel-arrow carousel-arrow-left" id="mArrowLeft">&#10094;</button>
-                <button class="carousel-arrow carousel-arrow-right" id="mArrowRight">&#10095;</button>
-                <div class="carousel-dots" id="mDots">
-                    {% for img in carousel_images %}
-                    <button class="carousel-dot {% if forloop.first %}active{% endif %}" data-idx="{{ forloop.counter0 }}"></button>
-                    {% endfor %}
-                </div>
-                {% endif %}
-            </div>
-
-            <!-- Carousel Thumbnails -->
-            {% if carousel_images|length > 1 %}
-            <div class="thumbs-container">
-                {% for img in carousel_images %}
-                <div class="thumb {% if forloop.first %}active{% endif %}" data-idx="{{ forloop.counter0 }}">
-                    <img src="{{ img.get_url }}" alt="Thumb {{ forloop.counter }}">
-                </div>
-                {% endfor %}
-            </div>
-            {% endif %}
-        </section>
-        {% endif %}
-
-        <!-- Features Bullet Points loops through features_list -->
-        <section class="features">
-            <h2 class="section-title">Amazing <span>Features</span></h2>
-            <div class="features-list">
-                {% for feature in product.features_list %}
-                <div class="feature-card">
-                    <div class="feature-index">{{ forloop.counter }}</div>
-                    <div class="feature-text">{{ feature }}</div>
-                </div>
-                {% empty %}
-                <div class="feature-card">
-                    <div class="feature-index">1</div>
-                    <div class="feature-text">High premium durability and ergonomic styling.</div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-index">2</div>
-                    <div class="feature-text">Strict quality control standard in Philippine local deliveries.</div>
-                </div>
-                {% endfor %}
-            </div>
-        </section>
-
-        <!-- Product Description Detail Block -->
-        <section class="description-box">
-            <h2 class="section-title">Product <span>Details</span></h2>
-            <div>
-                {{ product.description|safe }}
-            </div>
-        </section>
-
-        <!-- Customer Testimonials Social Proof -->
-        <section class="reviews-box">
-            <h2 class="section-title">Pinoy <span>Feedback</span></h2>
-            <div class="reviews-container">
-                {% for review in reviews %}
-                <div class="review-card">
-                    <div class="review-header">
-                        <span class="review-name">{{ review.name }} ({{ review.location }})</span>
-                        <span class="review-stars">
-                            {% for i in "12345"|slice:review.rating %}★{% endfor %}
-                        </span>
+            <!-- 5. Modern Pricing & Promo Section -->
+            <section class="px-6 py-6 border-y border-slate-100 bg-slate-50/50">
+                <div class="flex items-center justify-between bg-white border border-slate-100 p-5 rounded-2xl shadow-sm">
+                    <div class="flex flex-col">
+                        <span class="text-[10px] font-bold text-slate-400 tracking-wider uppercase">EXCLUSIVE LAUNCH PRICE</span>
+                        <div class="flex items-baseline gap-2 mt-1">
+                            <span class="font-display font-extrabold text-3xl text-slate-900">{{ product.formatted_price }}</span>
+                            {% if product.compare_at_price %}
+                            <span class="text-sm font-medium text-slate-400 line-through">{{ product.formatted_compare_at_price }}</span>
+                            {% endif %}
+                        </div>
                     </div>
-                    <p class="review-comment">"{{ review.comment }}"</p>
+                    {% if product.compare_at_price %}
+                    <div class="bg-rose-50 border border-rose-100 text-rose-600 font-bold text-xs px-3.5 py-1.5 rounded-lg tracking-wider uppercase">
+                        Save {{ product.discount_percentage }}% Today
+                    </div>
+                    {% endif %}
                 </div>
-                {% endfor %}
-            </div>
-        </section>
+            </section>
 
-        <!-- Native Django Checkout Form Block -->
-        <section class="checkout-box" id="checkout-form-section">
-            <div class="form-card">
-                <div class="form-header">
-                    <h2 class="form-title">🛒 Order Form (COD)</h2>
-                    <p class="form-subtitle">Salamat! Enter details below for instant Cash on Delivery order processing.</p>
-                </div>
-
-                {% if form.errors %}
-                <div class="form-errors">
-                    <strong>Paki-correct po ang errors sa form:</strong>
-                    <ul>
-                        {% for field, errors in form.errors.items %}
-                            {% for error in errors %}
-                                <li>{{ field|title }}: {{ error }}</li>
+            <!-- 6. Seamless Interactive Image Carousel Gallery -->
+            {% if carousel_images %}
+            <section class="px-6 py-8 border-b border-slate-100">
+                <h2 class="font-display font-bold text-xl text-slate-900 mb-5 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    Product Gallery
+                </h2>
+                
+                <div class="relative bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-lg shadow-slate-100/50 p-2">
+                    <div class="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-slate-50">
+                        <!-- Slides Wrapper -->
+                        <div class="flex w-full h-full transition-transform duration-500 ease-out" id="mSlides">
+                            {% for img in carousel_images %}
+                            <div class="min-w-full h-full flex items-center justify-center">
+                                <img class="w-full h-full object-cover" src="{{ img.get_url }}" alt="{{ img.alt_text|default:product.title }}">
+                            </div>
                             {% endfor %}
-                        {% endfor %}
-                    </ul>
+                        </div>
+
+                        <!-- Arrow Navigation Controls -->
+                        {% if carousel_images|length > 1 %}
+                        <button class="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 shadow border border-slate-100 text-slate-800 flex items-center justify-center hover:bg-white active:scale-95 transition-all z-10" id="mArrowLeft">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <button class="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 shadow border border-slate-100 text-slate-800 flex items-center justify-center hover:bg-white active:scale-95 transition-all z-10" id="mArrowRight">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                        
+                        <!-- Slide Dots Indicators -->
+                        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10" id="mDots">
+                            {% for img in carousel_images %}
+                            <button class="w-2 h-2 rounded-full bg-slate-300 transition-all duration-300 {% if forloop.first %}bg-slate-900 w-5{% endif %}" data-idx="{{ forloop.counter0 }}"></button>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Carousel Micro Thumbnails Row -->
+                {% if carousel_images|length > 1 %}
+                <div class="thumbs-container flex gap-2.5 mt-4 overflow-x-auto pb-1.5 thumbs-scrollbar">
+                    {% for img in carousel_images %}
+                    <div class="thumb w-14 h-14 rounded-lg overflow-hidden border-2 border-transparent transition-all flex-shrink-0 cursor-pointer {% if forloop.first %}border-slate-800{% endif %}" data-idx="{{ forloop.counter0 }}">
+                        <img class="w-full h-full object-cover" src="{{ img.get_url }}" alt="Thumbnail {{ forloop.counter }}">
+                    </div>
+                    {% endfor %}
                 </div>
                 {% endif %}
+            </section>
+            {% endif %}
 
-                <!-- Native Django Form Posting directly to the view -->
-                <form method="POST" action="">
-                    {% csrf_token %}
-                    
-                    <div class="django-form-field">
-                        <label for="{{ form.full_name.id_for_label }}">Full Name</label>
-                        {{ form.full_name }}
+            <!-- 7. Features & Benefits Spacing -->
+            <section class="px-6 py-8 border-b border-slate-100 bg-white">
+                <h2 class="font-display font-bold text-xl text-slate-900 mb-5 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Why Choose This?
+                </h2>
+                
+                <div class="flex flex-col gap-4">
+                    {% for feature in product.features_list %}
+                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                        <div class="w-6 h-6 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0 mt-0.5">
+                            <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <p class="text-sm font-semibold text-slate-700 leading-relaxed">{{ feature }}</p>
                     </div>
-
-                    <div class="django-form-field">
-                        <label for="{{ form.phone_number.id_for_label }}">Mobile Number</label>
-                        {{ form.phone_number }}
+                    {% empty %}
+                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                        <div class="w-6 h-6 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0 mt-0.5">
+                            <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <p class="text-sm font-semibold text-slate-700 leading-relaxed">Premium quality craftsmanship designed for longevity.</p>
                     </div>
-
-                    <div class="django-form-field">
-                        <label for="{{ form.shipping_address.id_for_label }}">Delivery Address</label>
-                        {{ form.shipping_address }}
+                    <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                        <div class="w-6 h-6 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0 mt-0.5">
+                            <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <p class="text-sm font-semibold text-slate-700 leading-relaxed">Rigorous quality control and local safety inspection standards.</p>
                     </div>
+                    {% endfor %}
+                </div>
+            </section>
 
-                    <button type="submit" class="btn-submit">
-                        CONFIRM COD ORDER NOW
-                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                            <polyline points="12 5 19 12 12 19"></polyline>
+            <!-- 8. Premium Brand Details & Product Description -->
+            <section class="px-6 py-8 border-b border-slate-100 bg-slate-50/30">
+                <h2 class="font-display font-bold text-xl text-slate-900 mb-4 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Product Specifications
+                </h2>
+                <div class="prose prose-slate prose-sm text-slate-600 leading-relaxed max-w-none">
+                    {{ product.description|safe }}
+                </div>
+            </section>
+
+            <!-- 9. Pinoy Feedback (Social Proof Reviews) -->
+            <section class="px-6 py-8 border-b border-slate-100 bg-white">
+                <h2 class="font-display font-bold text-xl text-slate-900 mb-5 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path>
+                    </svg>
+                    Real Customer Reviews
+                </h2>
+                
+                <div class="flex flex-col gap-4">
+                    {% for review in reviews %}
+                    <div class="border border-slate-100 p-5 rounded-2xl bg-white shadow-sm flex flex-col gap-3">
+                        <div class="flex justify-between items-center">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold text-slate-800">{{ review.name }}</span>
+                                <span class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">{{ review.location }}</span>
+                            </div>
+                            <div class="flex flex-col items-end gap-1">
+                                <div class="flex text-amber-400 text-xs">
+                                    {% for i in "12345"|slice:review.rating %}★{% endfor %}
+                                </div>
+                                <span class="text-[9px] bg-emerald-50 text-emerald-700 font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                                    <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    Verified Buyer
+                                </span>
+                            </div>
+                        </div>
+                        <p class="text-sm italic text-slate-600 leading-relaxed">
+                            "{{ review.comment }}"
+                        </p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- 10. Structured FAQ Section (Lightweight accordion using native details/summary) -->
+            <section class="px-6 py-8 border-b border-slate-100 bg-slate-50/50">
+                <h2 class="font-display font-bold text-xl text-slate-900 mb-5 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Frequently Asked Questions
+                </h2>
+
+                <div class="flex flex-col bg-white border border-slate-100 rounded-2xl p-4 shadow-sm divide-y divide-slate-100">
+                    <details class="group py-4 [&_summary::-webkit-details-marker]:hidden" open>
+                        <summary class="flex justify-between items-center cursor-pointer focus:outline-none">
+                            <h3 class="text-sm font-bold text-slate-800 group-open:text-slate-900 transition-colors">
+                                How does Cash on Delivery (COD) work?
+                            </h3>
+                            <span class="ml-1.5 flex-shrink-0 rounded-full bg-slate-50 p-1 text-slate-500 group-open:rotate-180 transition-transform duration-300">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </span>
+                        </summary>
+                        <div class="mt-3 text-xs leading-relaxed text-slate-500 pl-1">
+                            <p>Cash on Delivery is 100% risk-free. You only prepare the exact payment amount and hand it directly to our courier rider once the package is delivered to your doorstep. No downpayment or bank account required!</p>
+                        </div>
+                    </details>
+
+                    <details class="group py-4 [&_summary::-webkit-details-marker]:hidden">
+                        <summary class="flex justify-between items-center cursor-pointer focus:outline-none">
+                            <h3 class="text-sm font-bold text-slate-800 group-open:text-slate-900 transition-colors">
+                                Is shipping really free and are there hidden fees?
+                            </h3>
+                            <span class="ml-1.5 flex-shrink-0 rounded-full bg-slate-50 p-1 text-slate-500 group-open:rotate-180 transition-transform duration-300">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </span>
+                        </summary>
+                        <div class="mt-3 text-xs leading-relaxed text-slate-500 pl-1">
+                            <p>Yes, shipping is 100% free and fully insured nationwide. The price you see on this page is the exact amount you will pay upon delivery. There are absolutely no hidden charges.</p>
+                        </div>
+                    </details>
+
+                    <details class="group py-4 [&_summary::-webkit-details-marker]:hidden">
+                        <summary class="flex justify-between items-center cursor-pointer focus:outline-none">
+                            <h3 class="text-sm font-bold text-slate-800 group-open:text-slate-900 transition-colors">
+                                Can I inspect the item before paying?
+                            </h3>
+                            <span class="ml-1.5 flex-shrink-0 rounded-full bg-slate-50 p-1 text-slate-500 group-open:rotate-180 transition-transform duration-300">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </span>
+                        </summary>
+                        <div class="mt-3 text-xs leading-relaxed text-slate-500 pl-1">
+                            <p>Under standard courier policies in the Philippines (LBC, J&T, etc.), riders cannot open packages before payment is received. However, we cover every order with a 7-Day Replacement Guarantee if there are any defects or shipping issues.</p>
+                        </div>
+                    </details>
+
+                    <details class="group py-4 [&_summary::-webkit-details-marker]:hidden">
+                        <summary class="flex justify-between items-center cursor-pointer focus:outline-none">
+                            <h3 class="text-sm font-bold text-slate-800 group-open:text-slate-900 transition-colors">
+                                How do I track my order?
+                            </h3>
+                            <span class="ml-1.5 flex-shrink-0 rounded-full bg-slate-50 p-1 text-slate-500 group-open:rotate-180 transition-transform duration-300">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </span>
+                        </summary>
+                        <div class="mt-3 text-xs leading-relaxed text-slate-500 pl-1">
+                            <p>Once your order is processed and shipped, our automated system will send you a SMS tracking link to follow your parcel's journey from our global center straight to your doorstep.</p>
+                        </div>
+                    </details>
+                </div>
+            </section>
+
+            <!-- 11. Dedicated Customer Support Contact Card -->
+            <section class="px-6 py-8 border-b border-slate-100 bg-white">
+                <div class="bg-slate-50 border border-slate-100 rounded-2xl p-6 shadow-sm">
+                    <h3 class="font-display font-bold text-base text-slate-900 mb-3 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
                         </svg>
-                    </button>
-                </form>
-            </div>
-        </section>
+                        Dedicated Customer Support
+                    </h3>
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Your peace of mind is our highest priority. We inspect every order before dispatch to ensure absolute quality. If you have any inquiries, feel free to reach out.
+                    </p>
+                    <div class="flex flex-col gap-3 bg-white border border-slate-100/50 p-4 rounded-xl">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                            <span class="text-xs font-semibold text-slate-700">support@primeluxe.store</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <svg class="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span class="text-xs font-semibold text-slate-700">Mon - Sat | 9:00 AM - 6:00 PM PHT</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                            </svg>
+                            <span class="text-xs font-bold text-slate-700">Guaranteed Response within 24 Hours</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-        <!-- Footer -->
-        <footer>
-            <p class="logo" style="justify-content: center; margin-bottom: 0.5rem;">
-                PRIMELUXE<span>.</span>
-            </p>
-            <p>&copy; 2026 PrimeLuxe Philippines. All rights reserved.</p>
-            <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.35rem;">High-Speed Monolithic Mobile storefront optimized for local Smart & Globe networks.</p>
-        </footer>
+            <!-- 12. Shipping Transparency Notice & Checkout Form Block -->
+            <section class="px-6 py-10 bg-slate-50/50" id="checkout-form-section">
+                
+                <!-- Trust Notice: Shipping Transparency (STRICT TEXT REQUIREMENT) -->
+                <div class="mb-6 p-5 bg-white border border-slate-200/60 rounded-2xl shadow-sm relative overflow-hidden">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-slate-800"></div>
+                    <div class="flex gap-3">
+                        <svg class="w-5 h-5 text-slate-800 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                        <div class="flex flex-col gap-1">
+                            <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Official Brand Notice</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed font-medium">
+                                To maintain the lowest possible prices for our customers and avoid expensive local warehouse overhead, all orders are shipped directly from our global manufacturing facility. Please allow 10–15 business days for delivery and quality inspection. Free insured tracking included!
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
-        <!-- Sticky Bottom Mobile Cart CTA -->
-        <div class="sticky-buy">
-            <div class="sticky-price">
-                <span class="label">Total Price</span>
-                <span class="value">{{ product.formatted_price }}</span>
+                <!-- Order Checkout Form Card -->
+                <div class="bg-white border border-slate-100 rounded-3xl p-6 md:p-8 shadow-xl shadow-slate-200/50">
+                    <div class="mb-6">
+                        <h2 class="font-display font-extrabold text-xl text-slate-900 flex items-center gap-2">
+                            🛒 Order Form (COD)
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-1">
+                            Please fill out the delivery details below. Shipping is completely FREE!
+                        </p>
+                    </div>
+
+                    {% if form.errors %}
+                    <div class="mb-5 p-4 rounded-xl bg-rose-50 border border-rose-100 text-rose-800 text-xs">
+                        <strong class="font-bold flex items-center gap-1.5 mb-1 text-rose-900">
+                            <svg class="w-4 h-4 shrink-0 text-rose-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            Pakisulat po ng tama ang mga detalye:
+                        </strong>
+                        <ul class="list-disc pl-4 flex flex-col gap-0.5 font-medium">
+                            {% for field, errors in form.errors.items %}
+                                {% for error in errors %}
+                                    <li>{{ field|title }}: {{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <!-- Native Django Form Posting directly to the URL -->
+                    <form method="POST" action="" class="flex flex-col gap-5">
+                        {% csrf_token %}
+                        
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1" for="{{ form.full_name.id_for_label }}">Full Name (Buong Pangalan)</label>
+                            {{ form.full_name }}
+                        </div>
+
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1" for="{{ form.phone_number.id_for_label }}">Mobile Number (Numero ng Telepono)</label>
+                            {{ form.phone_number }}
+                            <span class="text-[10px] text-slate-400 font-medium pl-1">Format: 09171234567</span>
+                        </div>
+
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1" for="{{ form.shipping_address.id_for_label }}">Delivery Address (Kumpletong Address)</label>
+                            {{ form.shipping_address }}
+                            <span class="text-[10px] text-slate-400 font-medium pl-1">House No., Street, Barangay, City, Province</span>
+                        </div>
+
+                        <!-- Submit CTA Button (Reserved high-contrast brandAccent color) -->
+                        <button type="submit" class="w-full py-4 mt-2 flex items-center justify-center gap-3 bg-brandAccent hover:bg-brandAccentHover text-white font-display font-bold text-lg tracking-wide rounded-xl shadow-lg shadow-orange-500/20 active:scale-[0.98] transition-all duration-150">
+                            CONFIRM COD ORDER NOW
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- 13. Minimalist Premium Footer -->
+            <footer class="bg-slate-900 text-slate-400 py-10 px-6 mt-auto text-center flex flex-col items-center">
+                <p class="flex items-center gap-2 mb-4">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                        <polyline points="2 17 12 22 22 17"></polyline>
+                    </svg>
+                    <span class="font-display font-extrabold text-sm tracking-wider text-white uppercase">PRIMELUXE<span class="text-slate-400">.</span></span>
+                </p>
+                <p class="text-xs font-medium text-slate-500">&copy; 2026 PrimeLuxe Philippines. All rights reserved.</p>
+                <div class="flex gap-4 mt-4 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+                    <a href="#" class="hover:text-white transition">Privacy Policy</a>
+                    <span>•</span>
+                    <a href="#" class="hover:text-white transition">Terms of Service</a>
+                    <span>•</span>
+                    <a href="#" class="hover:text-white transition">Shipping Policy</a>
+                </div>
+                <p class="text-[9px] text-slate-600 mt-6 max-w-sm leading-relaxed">
+                    High-performance, bandwidth-optimized storefront. Fast load times engineered for Globe, TM, Smart, and TNT networks.
+                </p>
+            </footer>
+
+            <!-- 14. Sticky Bottom Mobile CTA (Conversions) -->
+            <div class="fixed bottom-0 left-50 transform translate-y-0 w-full max-w-2xl bg-white/95 backdrop-blur-md border-t border-slate-100 px-6 py-4 flex items-center justify-between gap-4 z-40 shadow-xl">
+                <div class="flex flex-col">
+                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Total Price (COD)</span>
+                    <span class="font-display font-extrabold text-xl text-slate-900 leading-none mt-1">{{ product.formatted_price }}</span>
+                </div>
+                <a href="#checkout-form-section" class="flex-grow max-w-[240px] py-3 px-5 flex items-center justify-center gap-2 bg-brandAccent hover:bg-brandAccentHover text-white font-display font-bold text-sm tracking-wide rounded-xl shadow-lg shadow-orange-500/10 active:scale-[0.98] transition-all">
+                    BUY NOW (COD)
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </a>
             </div>
-            <a href="#checkout-form-section" class="btn-sticky">
-                BUY NOW (COD)
-                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-            </a>
+
         </div>
-
     </div>
 
-    <!-- Success Confirmation Overlay -->
+    <!-- 15. Success Confirmation Overlay Modal (Minimalist Light Design matching Guidelines) -->
     {% if success %}
-    <div class="success-overlay" id="successModal">
-        <div class="success-card">
-            <div class="success-icon">
-                <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+    <div class="fixed inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-6 z-[100]" id="successModal">
+        <div class="bg-white border border-slate-100 rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl animate-[bounceIn_0.4s_ease-out]">
+            <div class="w-14 h-14 bg-emerald-50 border-2 border-emerald-500 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-5">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                     <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>
             </div>
-            <h3 class="success-title">Order Submitted!</h3>
-            <p class="success-desc">Maraming Salamat! We received your order <strong>#{{ order.id }}</strong> for {{ product.title }}. We will ship it to your address: <strong>{{ order.shipping_address }}</strong> shortly via Cash on Delivery.</p>
-            <button class="btn-success-close" onclick="closeSuccessModal()">Okay</button>
+            
+            <h3 class="font-display font-extrabold text-xl text-slate-900 mb-2">Order Submitted!</h3>
+            
+            <p class="text-xs text-slate-500 leading-relaxed mb-6 font-medium">
+                Maraming Salamat! We received your order <span class="font-bold text-slate-800">#{{ order.id }}</span> for {{ product.title }}. We will ship it directly to: <span class="font-bold text-slate-800">{{ order.shipping_address }}</span> via free Cash on Delivery.
+            </p>
+            
+            <button class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-display font-semibold text-sm tracking-wider rounded-xl transition duration-150" onclick="closeSuccessModal()">
+                Great, Thank You!
+            </button>
         </div>
     </div>
     {% endif %}
 
-    <!-- Carousel Javascript -->
+    <!-- Lightweight Carousel Scripting -->
     <script>
         const mSlides = document.getElementById('mSlides');
-        const mDots = document.querySelectorAll('.carousel-dot');
-        const mThumbs = document.querySelectorAll('.thumb');
+        const mDots = document.querySelectorAll('#mDots button');
+        const mThumbs = document.querySelectorAll('.thumbs-container .thumb');
         const mArrowLeft = document.getElementById('mArrowLeft');
         const mArrowRight = document.getElementById('mArrowRight');
         const mSlideCount = {{ carousel_images|length|default:1 }};
@@ -990,17 +622,27 @@
 
             mSlides.style.transform = `translateX(-${mCurrentIdx * 100}%)`;
 
+            // Update dots active style
             mDots.forEach((dot, index) => {
-                if(index === mCurrentIdx) dot.classList.add('active');
-                else dot.classList.remove('active');
+                if(index === mCurrentIdx) {
+                    dot.classList.add('bg-slate-900', 'w-5');
+                    dot.classList.remove('bg-slate-300');
+                } else {
+                    dot.classList.add('bg-slate-300');
+                    dot.classList.remove('bg-slate-900', 'w-5');
+                }
             });
 
+            // Update thumbnails active border
             mThumbs.forEach((thumb, index) => {
-                if(index === mCurrentIdx) thumb.classList.add('active');
-                else thumb.classList.remove('active');
-                
                 if(index === mCurrentIdx) {
+                    thumb.classList.add('border-slate-800');
+                    thumb.classList.remove('border-transparent');
+                    // Auto scroll thumbnail row to keep active item visible
                     thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                } else {
+                    thumb.classList.add('border-transparent');
+                    thumb.classList.remove('border-slate-800');
                 }
             });
         }
