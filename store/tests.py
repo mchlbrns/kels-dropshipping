@@ -309,6 +309,7 @@ class OrderFulfillmentFidelityTestCase(TestCase):
         self.assertEqual(len(messages_received), 1)
 
 
+@override_settings(PAYMONGO_SECRET_KEY='pm_mock_secret_key', PAYMONGO_WEBHOOK_SECRET='')
 class StorePayMongoTestCase(TestCase):
     def setUp(self):
         self.client = Client()
@@ -336,7 +337,7 @@ class StorePayMongoTestCase(TestCase):
         response = self.client.post(reverse('store:landing_page'), post_data)
         
         self.assertEqual(response.status_code, 302)
-        self.assertIn('/order/payment-success/?session_id=pm_mock_sess_', response.url)
+        self.assertIn('/order/payment-success/?order_id=', response.url)
         
         order = Order.objects.latest('created_at')
         self.assertEqual(order.payment_method, 'online')
@@ -376,6 +377,7 @@ from django.core.cache import cache
 from django.test import override_settings
 import json
 
+@override_settings(PAYMONGO_SECRET_KEY='pm_mock_secret_key', PAYMONGO_WEBHOOK_SECRET='')
 class StorePhase3AutomationTestCase(TestCase):
     def setUp(self):
         self.client = Client()

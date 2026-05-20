@@ -247,7 +247,7 @@ def landing_page(request):
             order.save()
             
             if order.payment_method == 'online':
-                success_url = request.build_absolute_uri(reverse('store:payment_success')) + "?session_id={CHECKOUT_SESSION_ID}"
+                success_url = request.build_absolute_uri(reverse('store:payment_success')) + f"?order_id={order.id}"
                 cancel_url = request.build_absolute_uri(request.path)
                 
                 client = PayMongoClient()
@@ -298,7 +298,7 @@ def product_detail(request, slug):
             order.save()
             
             if order.payment_method == 'online':
-                success_url = request.build_absolute_uri(reverse('store:payment_success')) + "?session_id={CHECKOUT_SESSION_ID}"
+                success_url = request.build_absolute_uri(reverse('store:payment_success')) + f"?order_id={order.id}"
                 cancel_url = request.build_absolute_uri(request.path)
                 
                 client = PayMongoClient()
@@ -354,25 +354,36 @@ def payment_success(request):
     Retrieves and verifies checkout session status, updates order payment status,
     and displays a beautiful conversion success screen.
     """
+    order_id = request.GET.get('order_id')
     session_id = request.GET.get('session_id')
-    if not session_id:
+
+    order = None
+    if order_id:
+        try:
+            order = Order.objects.get(id=order_id)
+            session_id = order.paymongo_session_id
+        except Order.DoesNotExist:
+            pass
+
+    if not session_id and not order:
         return redirect('store:store_catalog')
 
-    try:
-        order = Order.objects.get(paymongo_session_id=session_id)
-    except Order.DoesNotExist:
-        if session_id.startswith("pm_mock_sess_"):
-            try:
-                parts = session_id.split('_')
-                if len(parts) >= 4:
-                    order_id = int(parts[3])
-                    order = Order.objects.get(id=order_id)
-                else:
+    if not order:
+        try:
+            order = Order.objects.get(paymongo_session_id=session_id)
+        except Order.DoesNotExist:
+            if session_id and session_id.startswith("pm_mock_sess_"):
+                try:
+                    parts = session_id.split('_')
+                    if len(parts) >= 4:
+                        order_id_val = int(parts[3])
+                        order = Order.objects.get(id=order_id_val)
+                    else:
+                        order = Order.objects.latest('created_at')
+                except (IndexError, ValueError, Order.DoesNotExist):
                     order = Order.objects.latest('created_at')
-            except (IndexError, ValueError, Order.DoesNotExist):
-                order = Order.objects.latest('created_at')
-        else:
-            return redirect('store:store_catalog')
+            else:
+                return redirect('store:store_catalog')
 
     client = PayMongoClient()
     res = client.retrieve_checkout_session(session_id)
@@ -407,6 +418,7 @@ def paymongo_webhook(request):
         signature_header = request.META.get('HTTP_X_PAYMONGO_SIGNATURE', '')
         t = None
         li = None
+        te = None
         for pair in signature_header.split(','):
             if '=' in pair:
                 parts = pair.split('=', 1)
@@ -416,8 +428,11 @@ def paymongo_webhook(request):
                         t = v.strip()
                     elif k.strip() == 'li':
                         li = v.strip()
+                    elif k.strip() == 'te':
+                        te = v.strip()
         
-        if t and li:
+        signature = li or te
+        if t and signature:
             try:
                 # Concatenate payload: timestamp + "." + request body
                 payload_str = request.body.decode('utf-8')
@@ -428,7 +443,7 @@ def paymongo_webhook(request):
                     hashlib.sha256
                 ).hexdigest()
                 
-                if not hmac.compare_digest(computed_sig, li):
+                if not hmac.compare_digest(computed_sig, signature):
                     logger.warning("PayMongo webhook signature verification failed.")
                     return HttpResponse("Invalid signature", status=401)
             except Exception as e:
