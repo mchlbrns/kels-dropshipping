@@ -7,19 +7,19 @@ class CheckoutForm(forms.ModelForm):
         fields = ['full_name', 'phone_number', 'shipping_address']
         widgets = {
             'full_name': forms.TextInput(attrs={
-                'class': 'form-control block w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition duration-200',
+                'class': 'form-control block w-full px-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-800 focus:ring-4 focus:ring-slate-800/5 transition duration-200',
                 'placeholder': 'Juan Dela Cruz',
                 'required': 'required'
             }),
             'phone_number': forms.TextInput(attrs={
-                'class': 'form-control block w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition duration-200',
+                'class': 'form-control block w-full px-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-800 focus:ring-4 focus:ring-slate-800/5 transition duration-200',
                 'placeholder': '09171234567',
                 'pattern': '^(09|\\+639)\\d{9}$',
                 'title': 'Enter a valid Philippine mobile number (e.g. 09171234567)',
                 'required': 'required'
             }),
             'shipping_address': forms.Textarea(attrs={
-                'class': 'form-control block w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition duration-200',
+                'class': 'form-control block w-full px-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-800 focus:ring-4 focus:ring-slate-800/5 transition duration-200',
                 'placeholder': 'House/Bldg No., Street, Barangay, City, Province',
                 'rows': 3,
                 'required': 'required'

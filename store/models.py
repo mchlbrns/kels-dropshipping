@@ -62,6 +62,11 @@ class Product(models.Model):
         verbose_name="Is Active",
         help_text="Toggle visibility on the landing page"
     )
+    is_featured = models.BooleanField(
+        default=False,
+        verbose_name="Is Featured",
+        help_text="Check this box to set this product as the primary product displayed on the homepage."
+    )
     sku = models.CharField(
         max_length=100,
         blank=True,
@@ -106,17 +111,27 @@ class Product(models.Model):
             while queryset.filter(slug=self.slug).exists():
                 self.slug = f"{original_slug}-{count}"
                 count += 1
+        
+        if self.is_featured:
+            # Mark all other products as not featured
+            queryset = Product.objects.all()
+            if self.pk:
+                queryset = queryset.exclude(pk=self.pk)
+            queryset.update(is_featured=False)
+            
         super().save(*args, **kwargs)
 
     @property
     def formatted_price(self):
         """Returns selling price formatted in Philippine Pesos (₱)."""
-        return f"₱{self.price:,.2f}"
+        if self.price is not None:
+            return f"₱{self.price:,.2f}"
+        return "₱0.00"
 
     @property
     def formatted_compare_at_price(self):
         """Returns compare-at price formatted in Philippine Pesos (₱) or None."""
-        if self.compare_at_price:
+        if self.compare_at_price is not None:
             return f"₱{self.compare_at_price:,.2f}"
         return None
 
@@ -213,3 +228,88 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order #{self.id} for {self.product.title} by {self.full_name}"
+
+
+class Review(models.Model):
+    product = models.ForeignKey(
+        Product, 
+        on_delete=models.CASCADE, 
+        related_name='reviews', 
+        verbose_name="Product"
+    )
+    name = models.CharField(
+        max_length=255,
+        verbose_name="Reviewer Name"
+    )
+    rating = models.PositiveIntegerField(
+        default=5,
+        verbose_name="Rating (1-5)",
+        help_text="Enter a value from 1 to 5 stars"
+    )
+    comment = models.TextField(
+        verbose_name="Review Comment"
+    )
+    location = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name="Reviewer Location",
+        help_text="E.g., Quezon City, Cebu City, Davao"
+    )
+    is_approved = models.BooleanField(
+        default=True,
+        verbose_name="Is Approved",
+        help_text="Only approved reviews will display on the storefront landing page"
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Review Date"
+    )
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Product Review"
+        verbose_name_plural = "Product Reviews"
+
+    def __str__(self):
+        return f"Review ({self.rating} stars) for {self.product.title} by {self.name}"
+
+    @property
+    def stars_display(self):
+        """Returns stars character sequence (e.g. ★★★★★)."""
+        return '★' * self.rating
+
+    def clean(self):
+        super().clean()
+        if self.rating < 1 or self.rating > 5:
+            raise ValidationError({'rating': "Rating must be between 1 and 5."})
+
+
+class FAQ(models.Model):
+    product = models.ForeignKey(
+        Product, 
+        on_delete=models.CASCADE, 
+        related_name='faqs', 
+        verbose_name="Product",
+        help_text="Associate this FAQ with a specific product"
+    )
+    question = models.CharField(
+        max_length=255,
+        verbose_name="Question"
+    )
+    answer = models.TextField(
+        verbose_name="Answer"
+    )
+    order = models.PositiveIntegerField(
+        default=0,
+        verbose_name="Display Order",
+        help_text="Order in which FAQs appear (ascending)"
+    )
+
+    class Meta:
+        ordering = ['order', 'id']
+        verbose_name = "Product FAQ"
+        verbose_name_plural = "Product FAQs"
+
+    def __str__(self):
+        return f"FAQ: {self.question[:50]}..."

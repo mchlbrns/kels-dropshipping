@@ -55,58 +55,62 @@
             border-radius: 10px;
         }
 
-        /* Force checkout input widgets into premium light-theme styles */
-        #checkout-form-section input.form-control, 
-        #checkout-form-section textarea.form-control {
-            background-color: #ffffff !important;
-            border-width: 1px !important;
-            border-color: #cbd5e1 !important;
-            color: #0f172a !important;
-            border-radius: 0.75rem !important; /* rounded-xl */
-            padding-top: 0.75rem !important;
-            padding-bottom: 0.75rem !important;
-            padding-left: 1rem !important;
-            padding-right: 1rem !important;
-            width: 100% !important;
-            font-family: 'Inter', sans-serif !important;
-            font-size: 0.95rem !important;
-            line-height: 1.5 !important;
-            transition-property: all !important;
-            transition-duration: 200ms !important;
+        /* Shine Reflection Effect Keyframes & Utility Class */
+        @keyframes shine {
+            100% {
+                left: 125%;
+            }
         }
-
+        .animate-shine-autoplay {
+            position: relative;
+            overflow: hidden;
+        }
+        .animate-shine-autoplay::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 30%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.3) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(25deg);
+            animation: shine 4s ease-in-out infinite;
+        }
+        
+        /* Clean and simple adjustments for forms inputs focus */
         #checkout-form-section input.form-control:focus, 
         #checkout-form-section textarea.form-control:focus {
-            outline: 2px solid transparent !important;
-            outline-offset: 2px !important;
             border-color: #0f172a !important;
-            box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.06) !important;
-        }
-
-        #checkout-form-section input.form-control::placeholder, 
-        #checkout-form-section textarea.form-control::placeholder {
-            color: #94a3b8 !important;
+            box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.04) !important;
         }
     </style>
 </head>
 <body class="pb-24">
 
-    <!-- Outer Viewport Wrapper (Centered single column premium storefront) -->
+    <!-- Outer Viewport Wrapper (Centered responsive premium storefront) -->
     <div class="min-h-screen bg-slate-50 flex flex-col items-center">
-        <div class="w-full max-w-2xl bg-white min-h-screen shadow-2xl flex flex-col border-x border-slate-100 relative">
+        <div class="w-full max-w-2xl lg:max-w-5xl xl:max-w-6xl bg-white min-h-screen shadow-2xl flex flex-col border-x border-slate-100/80 relative transition-all duration-300">
             
             <!-- 1. Sticky Premium Header -->
             <header class="sticky top-0 bg-white/90 backdrop-blur-md border-b border-slate-100 z-50 px-6 py-4 flex justify-between items-center">
-                <a href="#" class="flex items-center gap-2 group">
+                <a href="{% url 'store:landing_page' %}" class="flex items-center gap-2 group">
                     <svg class="w-6 h-6 text-slate-900" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                         <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
                         <polyline points="2 17 12 22 22 17"></polyline>
                     </svg>
                     <span class="font-display font-extrabold text-lg tracking-wider text-slate-900 uppercase">PRIMELUXE<span class="text-slate-400">.</span></span>
                 </a>
-                <div class="flex items-center gap-1.5 bg-emerald-50 border border-emerald-100 rounded-full px-3 py-1">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span class="text-[10px] font-bold tracking-wider text-emerald-800 uppercase">COD Nationwide</span>
+                <div class="flex items-center gap-4">
+                    <a href="{% url 'store:store_catalog' %}" class="text-xs font-bold text-slate-600 hover:text-slate-900 uppercase tracking-wider transition">Shop</a>
+                    <div class="flex items-center gap-1.5 bg-emerald-50 border border-emerald-100 rounded-full px-3 py-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span class="text-[10px] font-bold tracking-wider text-emerald-800 uppercase">COD Nationwide</span>
+                    </div>
                 </div>
             </header>
 
@@ -133,10 +137,16 @@
                 </div>
             </section>
 
+            <!-- Main Content Responsive Grid (Stacks on mobile, side-by-side on desktop) -->
+            <div class="w-full lg:grid lg:grid-cols-12 lg:gap-8 lg:p-8 flex flex-col">
+                
+                <!-- Left Sticky Column (Hero, Carousel, Features) -->
+                <div class="lg:col-span-7 flex flex-col lg:sticky lg:top-24 lg:self-start gap-4 pb-12 lg:pb-0">
+
             <!-- 3. Hero Presentation & Spacing -->
             <section class="px-6 pt-10 pb-8 flex flex-col items-center text-center">
                 <span class="text-[11px] font-bold tracking-widest text-slate-400 uppercase">PHILIPPINES EXCLUSIVE DEBUT</span>
-                <h1 class="font-display font-extrabold text-3xl md:text-4xl text-slate-900 mt-3 mb-4 leading-tight max-w-xl">
+                <h1 class="font-display font-extrabold text-3xl md:text-4xl tracking-tight mt-3 mb-4 leading-tight max-w-xl bg-gradient-to-r from-slate-950 via-slate-800 to-slate-700 bg-clip-text text-transparent">
                     {{ product.title }}
                 </h1>
                 
@@ -166,7 +176,7 @@
 
                     <!-- High-contrast Accent 'Buy Now' Hero CTA -->
                     <div class="w-full px-2">
-                        <a href="#checkout-form-section" class="w-full py-4 px-6 flex items-center justify-center gap-3 bg-brandAccent hover:bg-brandAccentHover text-white font-display font-bold text-lg tracking-wide rounded-xl shadow-xl shadow-orange-500/10 active:scale-[0.98] transition-all duration-150">
+                        <a href="#checkout-form-section" class="animate-shine-autoplay w-full py-4 px-6 flex items-center justify-center gap-3 bg-brandAccent hover:bg-brandAccentHover text-white font-display font-bold text-lg tracking-wide rounded-xl shadow-xl shadow-orange-500/15 active:scale-[0.97] transition-all duration-150">
                             BUY NOW - CASH ON DELIVERY
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -184,22 +194,43 @@
             </section>
 
             <!-- 5. Modern Pricing & Promo Section -->
-            <section class="px-6 py-6 border-y border-slate-100 bg-slate-50/50">
+            <section class="px-6 py-6 border-y border-slate-100 bg-slate-50/50 flex flex-col gap-4">
                 <div class="flex items-center justify-between bg-white border border-slate-100 p-5 rounded-2xl shadow-sm">
                     <div class="flex flex-col">
                         <span class="text-[10px] font-bold text-slate-400 tracking-wider uppercase">EXCLUSIVE LAUNCH PRICE</span>
                         <div class="flex items-baseline gap-2 mt-1">
-                            <span class="font-display font-extrabold text-3xl text-slate-900">{{ product.formatted_price }}</span>
+                            <span class="font-display font-extrabold text-3xl bg-gradient-to-r from-slate-950 to-slate-800 bg-clip-text text-transparent">{{ product.formatted_price }}</span>
                             {% if product.compare_at_price %}
                             <span class="text-sm font-medium text-slate-400 line-through">{{ product.formatted_compare_at_price }}</span>
                             {% endif %}
                         </div>
                     </div>
                     {% if product.compare_at_price %}
-                    <div class="bg-rose-50 border border-rose-100 text-rose-600 font-bold text-xs px-3.5 py-1.5 rounded-lg tracking-wider uppercase">
+                    <div class="bg-rose-50 border border-rose-100 text-rose-600 font-bold text-xs px-3.5 py-1.5 rounded-lg tracking-wider uppercase shadow-sm">
                         Save {{ product.discount_percentage }}% Today
                     </div>
                     {% endif %}
+                </div>
+
+                <!-- Elegant Urgency Timer -->
+                <div class="bg-white border border-slate-100 px-5 py-4 rounded-2xl shadow-sm flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse shrink-0"></span>
+                        <span class="text-xs font-bold text-rose-600 tracking-wider uppercase">Promo Offer Ends In:</span>
+                    </div>
+                    <div class="flex gap-2 font-display text-sm font-extrabold text-slate-800" id="promoTimer">
+                        <div class="flex flex-col items-center min-w-[32px] bg-slate-50 border border-slate-100 rounded-lg p-1.5 shadow-sm">
+                            <span id="timerHrs">02</span>
+                        </div>
+                        <span class="self-center text-slate-300">:</span>
+                        <div class="flex flex-col items-center min-w-[32px] bg-slate-50 border border-slate-100 rounded-lg p-1.5 shadow-sm">
+                            <span id="timerMins">45</span>
+                        </div>
+                        <span class="self-center text-slate-300">:</span>
+                        <div class="flex flex-col items-center min-w-[32px] bg-slate-50 border border-slate-100 rounded-lg p-1.5 shadow-sm">
+                            <span id="timerSecs">12</span>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -299,6 +330,10 @@
                     {% endfor %}
                 </div>
             </section>
+                </div> <!-- End Left Column -->
+
+                <!-- Right Column (Specs, Reviews, FAQ, Support, Checkout Form) -->
+                <div class="lg:col-span-5 flex flex-col gap-6 mt-6 lg:mt-0">
 
             <!-- 8. Premium Brand Details & Product Description -->
             <section class="px-6 py-8 border-b border-slate-100 bg-slate-50/30">
@@ -360,6 +395,23 @@
                 </h2>
 
                 <div class="flex flex-col bg-white border border-slate-100 rounded-2xl p-4 shadow-sm divide-y divide-slate-100">
+                    {% for faq in faqs %}
+                    <details class="group py-4 [&_summary::-webkit-details-marker]:hidden" {% if forloop.first %}open{% endif %}>
+                        <summary class="flex justify-between items-center cursor-pointer focus:outline-none">
+                            <h3 class="text-sm font-bold text-slate-800 group-open:text-slate-900 transition-colors">
+                                {{ faq.question }}
+                            </h3>
+                            <span class="ml-1.5 flex-shrink-0 rounded-full bg-slate-50 p-1 text-slate-500 group-open:rotate-180 transition-transform duration-300">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </span>
+                        </summary>
+                        <div class="mt-3 text-xs leading-relaxed text-slate-500 pl-1">
+                            <p>{{ faq.answer }}</p>
+                        </div>
+                    </details>
+                    {% empty %}
                     <details class="group py-4 [&_summary::-webkit-details-marker]:hidden" open>
                         <summary class="flex justify-between items-center cursor-pointer focus:outline-none">
                             <h3 class="text-sm font-bold text-slate-800 group-open:text-slate-900 transition-colors">
@@ -423,6 +475,7 @@
                             <p>Once your order is processed and shipped, our automated system will send you a SMS tracking link to follow your parcel's journey from our global center straight to your doorstep.</p>
                         </div>
                     </details>
+                    {% endfor %}
                 </div>
             </section>
 
@@ -533,15 +586,17 @@
                         </div>
 
                         <!-- Submit CTA Button (Reserved high-contrast brandAccent color) -->
-                        <button type="submit" class="w-full py-4 mt-2 flex items-center justify-center gap-3 bg-brandAccent hover:bg-brandAccentHover text-white font-display font-bold text-lg tracking-wide rounded-xl shadow-lg shadow-orange-500/20 active:scale-[0.98] transition-all duration-150">
+                        <button type="submit" id="confirmOrderBtn" class="animate-shine-autoplay w-full py-4 mt-2 flex items-center justify-center gap-3 bg-brandAccent hover:bg-brandAccentHover text-white font-display font-bold text-lg tracking-wide rounded-xl shadow-lg shadow-orange-500/20 active:scale-[0.97] transition-all duration-150">
                             CONFIRM COD ORDER NOW
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
                         </button>
                     </form>
                 </div>
             </section>
+                </div> <!-- End Right Column -->
+            </div> <!-- End Main Grid Wrapper -->
 
             <!-- 13. Minimalist Premium Footer -->
             <footer class="bg-slate-900 text-slate-400 py-10 px-6 mt-auto text-center flex flex-col items-center">
@@ -566,14 +621,14 @@
             </footer>
 
             <!-- 14. Sticky Bottom Mobile CTA (Conversions) -->
-            <div class="fixed bottom-0 left-50 transform translate-y-0 w-full max-w-2xl bg-white/95 backdrop-blur-md border-t border-slate-100 px-6 py-4 flex items-center justify-between gap-4 z-40 shadow-xl">
+            <div class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-2xl bg-white/90 backdrop-blur-md border-t border-slate-100/80 px-6 py-4 flex items-center justify-between gap-4 z-40 shadow-[0_-8px_30px_rgba(0,0,0,0.03)] transition-all duration-300 lg:hidden">
                 <div class="flex flex-col">
                     <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Total Price (COD)</span>
                     <span class="font-display font-extrabold text-xl text-slate-900 leading-none mt-1">{{ product.formatted_price }}</span>
                 </div>
-                <a href="#checkout-form-section" class="flex-grow max-w-[240px] py-3 px-5 flex items-center justify-center gap-2 bg-brandAccent hover:bg-brandAccentHover text-white font-display font-bold text-sm tracking-wide rounded-xl shadow-lg shadow-orange-500/10 active:scale-[0.98] transition-all">
+                <a href="#checkout-form-section" class="animate-shine-autoplay flex-grow max-w-[240px] py-3.5 px-5 flex items-center justify-center gap-2 bg-brandAccent hover:bg-brandAccentHover text-white font-display font-bold text-sm tracking-wide rounded-xl shadow-lg shadow-orange-500/15 active:scale-[0.97] transition-all duration-150">
                     BUY NOW (COD)
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                         <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
                 </a>
@@ -581,6 +636,9 @@
 
         </div>
     </div>
+
+    <!-- Canvas Confetti Script Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <!-- 15. Success Confirmation Overlay Modal (Minimalist Light Design matching Guidelines) -->
     {% if success %}
@@ -605,8 +663,9 @@
     </div>
     {% endif %}
 
-    <!-- Lightweight Carousel Scripting -->
+    <!-- Lightweight Carousel, Countdown, Swipe, Loading State, and Confetti Scripting -->
     <script>
+        // 1. Carousel Logic
         const mSlides = document.getElementById('mSlides');
         const mDots = document.querySelectorAll('#mDots button');
         const mThumbs = document.querySelectorAll('.thumbs-container .thumb');
@@ -665,6 +724,131 @@
                 updateMobileCarousel(idx);
             });
         });
+
+        // 2. Mobile Swipe Gestures
+        let startX = 0;
+        let currentX = 0;
+        let isDragging = false;
+
+        mSlides.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            isDragging = true;
+        }, { passive: true });
+
+        mSlides.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            currentX = e.touches[0].clientX;
+        }, { passive: true });
+
+        mSlides.addEventListener('touchend', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            const diffX = startX - currentX;
+            if (Math.abs(diffX) > 40) {
+                if (diffX > 0) {
+                    updateMobileCarousel(mCurrentIdx + 1);
+                } else {
+                    updateMobileCarousel(mCurrentIdx - 1);
+                }
+            }
+        });
+
+        // 3. Elegant Urgency Countdown Timer (3 hours recycle)
+        const targetHrs = document.getElementById('timerHrs');
+        const targetMins = document.getElementById('timerMins');
+        const targetSecs = document.getElementById('timerSecs');
+
+        function startCountdown() {
+            let expirationTime = localStorage.getItem('premium_checkout_timer_expiry');
+            
+            if (!expirationTime || Date.now() > parseInt(expirationTime)) {
+                // Set custom countdown of 2 hours 45 minutes and 12 seconds from now
+                expirationTime = Date.now() + (2 * 60 * 60 * 1000) + (45 * 60 * 1000) + (12 * 1000);
+                localStorage.setItem('premium_checkout_timer_expiry', expirationTime.toString());
+            }
+
+            function updateTimer() {
+                const now = Date.now();
+                let diff = parseInt(expirationTime) - now;
+
+                if (diff <= 0) {
+                    // Recycle timer to maintain urgency for new visitor
+                    expirationTime = Date.now() + (2 * 60 * 60 * 1000) + (45 * 60 * 1000);
+                    localStorage.setItem('premium_checkout_timer_expiry', expirationTime.toString());
+                    diff = expirationTime - now;
+                }
+
+                const hrs = Math.floor(diff / (1000 * 60 * 60));
+                const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+                if (targetHrs) targetHrs.textContent = hrs.toString().padStart(2, '0');
+                if (targetMins) targetMins.textContent = mins.toString().padStart(2, '0');
+                if (targetSecs) targetSecs.textContent = secs.toString().padStart(2, '0');
+            }
+
+            updateTimer();
+            setInterval(updateTimer, 1000);
+        }
+        
+        startCountdown();
+
+        // 4. Form Submission Loading State
+        const orderForm = document.querySelector('#checkout-form-section form');
+        const confirmBtn = document.getElementById('confirmOrderBtn');
+
+        if (orderForm && confirmBtn) {
+            orderForm.addEventListener('submit', () => {
+                if (orderForm.checkValidity()) {
+                    confirmBtn.disabled = true;
+                    confirmBtn.classList.remove('bg-brandAccent', 'hover:bg-brandAccentHover');
+                    confirmBtn.classList.add('bg-slate-800', 'opacity-90', 'cursor-not-allowed');
+                    confirmBtn.innerHTML = `
+                        <span>IPINAPROSESO ANG ORDER...</span>
+                        <svg class="animate-spin h-5 w-5 text-white shrink-0 ml-2" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    `;
+                }
+            });
+        }
+
+        // 5. Success Confetti Burst
+        {% if success %}
+        function triggerConfetti() {
+            if (typeof confetti === 'function') {
+                const duration = 2.5 * 1000;
+                const end = Date.now() + duration;
+
+                (function frame() {
+                    confetti({
+                        particleCount: 4,
+                        angle: 60,
+                        spread: 60,
+                        origin: { x: 0, y: 0.8 },
+                        colors: ['#FF5A00', '#10b981', '#3b82f6', '#f59e0b']
+                    });
+                    confetti({
+                        particleCount: 4,
+                        angle: 120,
+                        spread: 60,
+                        origin: { x: 1, y: 0.8 },
+                        colors: ['#FF5A00', '#10b981', '#3b82f6', '#f59e0b']
+                    });
+
+                    if (Date.now() < end) {
+                        requestAnimationFrame(frame);
+                    }
+                }());
+            }
+        }
+        if (document.readyState === 'interactive' || document.readyState === 'complete') {
+            triggerConfetti();
+        } else {
+            window.addEventListener('DOMContentLoaded', triggerConfetti);
+        }
+        {% endif %}
 
         function closeSuccessModal() {
             const modal = document.getElementById('successModal');

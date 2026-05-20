@@ -1,11 +1,62 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Product, ProductImage, Order
+from .models import Product, ProductImage, Order, Review, FAQ
 from .forms import CheckoutForm
 
 def get_or_create_demo_product():
-    """Seeds a premium, high-converting demo product in the database if empty."""
+    """Seeds a premium, high-converting demo product and dynamic assets if empty."""
     if Product.objects.exists():
-        return Product.objects.filter(is_active=True).first()
+        featured = Product.objects.filter(is_active=True, is_featured=True).first()
+        product = featured or Product.objects.filter(is_active=True).first()
+        if product:
+            # Ensure reviews and FAQs are seeded for the existing product
+            if not product.reviews.exists():
+                Review.objects.create(
+                    product=product,
+                    name="Mark D.",
+                    rating=5,
+                    comment="Absolutely phenomenal mouse! Extremely lightweight and the battery lasts for weeks. Delivered in just 2 days here in Manila!",
+                    location="Quezon City"
+                )
+                Review.objects.create(
+                    product=product,
+                    name="Samantha P.",
+                    rating=5,
+                    comment="Super responsive and looks gorgeous on my white desk setup. The RGB lights are fully customizable. Highly recommended!",
+                    location="Cebu City"
+                )
+                Review.objects.create(
+                    product=product,
+                    name="Jayson R.",
+                    rating=4,
+                    comment="Solid build quality, very light and clicks feel super clicky. Perfect for CS2 and coding sessions.",
+                    location="Davao City"
+                )
+            if not product.faqs.exists():
+                FAQ.objects.create(
+                    product=product,
+                    question="How does Cash on Delivery (COD) work?",
+                    answer="Cash on Delivery is 100% risk-free. You only prepare the exact payment amount and hand it directly to our courier rider once the package is delivered to your doorstep. No downpayment or bank account required!",
+                    order=1
+                )
+                FAQ.objects.create(
+                    product=product,
+                    question="Is shipping really free and are there hidden fees?",
+                    answer="Yes, shipping is 100% free and fully insured nationwide. The price you see on this page is the exact amount you will pay upon delivery. There are absolutely no hidden charges.",
+                    order=2
+                )
+                FAQ.objects.create(
+                    product=product,
+                    question="Can I inspect the item before paying?",
+                    answer="Under courier policies in the Philippines, riders cannot open packages before payment is received. However, we cover every order with a 7-Day Replacement Guarantee if there are any defects.",
+                    order=3
+                )
+                FAQ.objects.create(
+                    product=product,
+                    question="How do I track my order?",
+                    answer="Once your order is processed and shipped, our automated system will send you a SMS tracking link to follow your parcel's journey from our global center straight to your doorstep.",
+                    order=4
+                )
+            return product
 
     # Create the demo product
     demo_product = Product.objects.create(
@@ -30,7 +81,8 @@ def get_or_create_demo_product():
             "Up to 80 hours of continuous high-intensity battery life",
             "Vibrant dynamic RGB customizable lighting zones with 16.8M colors"
         ],
-        is_active=True
+        is_active=True,
+        is_featured=True
     )
 
     # Seed 3 high-quality Unsplash image URLs to build a premium carousel
@@ -53,49 +105,97 @@ def get_or_create_demo_product():
         alt_text="RGB lighting highlight under dark setup"
     )
 
+    # Seed dynamic social proof reviews
+    Review.objects.create(
+        product=demo_product,
+        name="Mark D.",
+        rating=5,
+        comment="Absolutely phenomenal mouse! Extremely lightweight and the battery lasts for weeks. Delivered in just 2 days here in Manila!",
+        location="Quezon City"
+    )
+    Review.objects.create(
+        product=demo_product,
+        name="Samantha P.",
+        rating=5,
+        comment="Super responsive and looks gorgeous on my white desk setup. The RGB lights are fully customizable. Highly recommended!",
+        location="Cebu City"
+    )
+    Review.objects.create(
+        product=demo_product,
+        name="Jayson R.",
+        rating=4,
+        comment="Solid build quality, very light and clicks feel super clicky. Perfect for CS2 and coding sessions.",
+        location="Davao City"
+    )
+
+    # Seed dynamic FAQs
+    FAQ.objects.create(
+        product=demo_product,
+        question="How does Cash on Delivery (COD) work?",
+        answer="Cash on Delivery is 100% risk-free. You only prepare the exact payment amount and hand it directly to our courier rider once the package is delivered to your doorstep. No downpayment or bank account required!",
+        order=1
+    )
+    FAQ.objects.create(
+        product=demo_product,
+        question="Is shipping really free and are there hidden fees?",
+        answer="Yes, shipping is 100% free and fully insured nationwide. The price you see on this page is the exact amount you will pay upon delivery. There are absolutely no hidden charges.",
+        order=2
+    )
+    FAQ.objects.create(
+        product=demo_product,
+        question="Can I inspect the item before paying?",
+        answer="Under courier policies in the Philippines, riders cannot open packages before payment is received. However, we cover every order with a 7-Day Replacement Guarantee if there are any defects.",
+        order=3
+    )
+    FAQ.objects.create(
+        product=demo_product,
+        question="How do I track my order?",
+        answer="Once your order is processed and shipped, our automated system will send you a SMS tracking link to follow your parcel's journey from our global center straight to your doorstep.",
+        order=4
+    )
+
     return demo_product
 
 
 def landing_page(request):
-    """Renders the standard home page, auto-redirecting or rendering the first active product."""
-    product = get_or_create_demo_product()
+    """Renders the standard home page, support GET/POST, auto-redirecting or rendering the featured/first active product."""
+    product = Product.objects.filter(is_active=True, is_featured=True).first()
+    if not product:
+        product = Product.objects.filter(is_active=True).first()
+    if not product:
+        # Fall back to seeding the demo product (which is featured)
+        product = get_or_create_demo_product()
+        
     if not product:
         return render(request, 'store/no_products.html')
         
-    # Standard home renders the first active product landing page directly for conversions
     carousel_images = product.carousel_images.all()
-    form = CheckoutForm()
+    success = False
+    order = None
+
+    if request.method == 'POST':
+        form = CheckoutForm(request.POST)
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.product = product
+            order.save()
+            success = True
+            form = CheckoutForm() # Reset form upon successful order
+    else:
+        form = CheckoutForm()
     
-    # Mock reviews to add social proof without third-party heavy apps
-    social_proof_reviews = [
-        {
-            "name": "Mark D.",
-            "rating": 5,
-            "comment": "Absolutely phenomenal mouse! Extremely lightweight and the battery lasts for weeks. Delivered in just 2 days here in Manila!",
-            "date": "May 18, 2026",
-            "location": "Quezon City"
-        },
-        {
-            "name": "Samantha P.",
-            "rating": 5,
-            "comment": "Super responsive and looks gorgeous on my white desk setup. The RGB lights are fully customizable. Highly recommended!",
-            "date": "May 15, 2026",
-            "location": "Cebu City"
-        },
-        {
-            "name": "Jayson R.",
-            "rating": 4,
-            "comment": "Solid build quality, very light and clicks feel super clicky. Perfect for CS2 and coding sessions.",
-            "date": "May 12, 2026",
-            "location": "Davao City"
-        }
-    ]
+    # Load dynamic reviews and FAQs
+    reviews = product.reviews.filter(is_approved=True)
+    faqs = product.faqs.all()
 
     context = {
         'product': product,
         'carousel_images': carousel_images,
-        'reviews': social_proof_reviews,
+        'reviews': reviews,
+        'faqs': faqs,
         'form': form,
+        'success': success,
+        'order': order,
     }
     return render(request, 'store/landing_page.html', context)
 
@@ -118,36 +218,31 @@ def product_detail(request, slug):
     else:
         form = CheckoutForm()
 
-    social_proof_reviews = [
-        {
-            "name": "Mark D.",
-            "rating": 5,
-            "comment": "Absolutely phenomenal mouse! Extremely lightweight and the battery lasts for weeks. Delivered in just 2 days here in Manila!",
-            "date": "May 18, 2026",
-            "location": "Quezon City"
-        },
-        {
-            "name": "Samantha P.",
-            "rating": 5,
-            "comment": "Super responsive and looks gorgeous on my white desk setup. The RGB lights are fully customizable. Highly recommended!",
-            "date": "May 15, 2026",
-            "location": "Cebu City"
-        },
-        {
-            "name": "Jayson R.",
-            "rating": 4,
-            "comment": "Solid build quality, very light and clicks feel super clicky. Perfect for CS2 and coding sessions.",
-            "date": "May 12, 2026",
-            "location": "Davao City"
-        }
-    ]
+    # Load dynamic reviews and FAQs
+    reviews = product.reviews.filter(is_approved=True)
+    faqs = product.faqs.all()
 
     context = {
         'product': product,
         'carousel_images': carousel_images,
-        'reviews': social_proof_reviews,
+        'reviews': reviews,
+        'faqs': faqs,
         'form': form,
         'success': success,
         'order': order,
     }
     return render(request, 'store/landing_page.html', context)
+
+
+def store_catalog(request):
+    """Renders the catalog page showing all active products."""
+    products = Product.objects.filter(is_active=True)
+    # Ensure there's at least one product
+    if not products.exists():
+        get_or_create_demo_product()
+        products = Product.objects.filter(is_active=True)
+        
+    context = {
+        'products': products,
+    }
+    return render(request, 'store/catalog.html', context)
