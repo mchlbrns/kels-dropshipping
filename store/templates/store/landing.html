@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.title }} | Exclusive Store</title>
+    <meta name="description" content="Get the premium {{ product.title }} today at an exclusive discounted price. Experience the ultimate design and performance. Cash on Delivery available!">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Core Styling -->
+    <style>
+        :root {
+            --bg-base: #0b0f19;
+            --bg-surface: rgba(22, 28, 45, 0.7);
+            --bg-card: #121826;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --primary: #8b5cf6;
+            --primary-hover: #7c3aed;
+            --accent: #10b981;
+            --accent-hover: #059669;
+            --accent-orange: #f97316;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --glass-blur: blur(16px);
+            --glow: 0 0 20px rgba(139, 92, 246, 0.25);
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Glow Backgrounds */
+        .ambient-glow-1 {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(0,0,0,0) 70%);
+            top: 10%;
+            left: -100px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .ambient-glow-2 {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, rgba(0,0,0,0) 70%);
+            top: 40%;
+            right: -150px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(11, 15, 25, 0.75);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span {
+            background: linear-gradient(135deg, var(--primary), #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-badge {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Product Presentation Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+            margin-bottom: 5rem;
+        }
+
+        @media (min-width: 992px) {
+            .product-grid {
+                grid-template-columns: 1.1fr 0.9fr;
+            }
+        }
+
+        /* Media Column: Carousel & Video */
+        .media-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Sleek Carousel */
+        .carousel-wrapper {
+            position: relative;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            aspect-ratio: 4/3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carousel-slides {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(18, 24, 38, 0.7);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            backdrop-filter: var(--glass-blur);
+            transition: all 0.2s ease;
+            z-index: 5;
+        }
+
+        .carousel-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: var(--glow);
+        }
+
+        .carousel-btn-prev {
+            left: 1rem;
+        }
+
+        .carousel-btn-next {
+            right: 1rem;
+        }
+
+        .carousel-dots {
+            position: absolute;
+            bottom: 1.25rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+            z-index: 5;
+        }
+
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-dot.active {
+            background: var(--primary);
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        /* Thumbnails */
+        .thumb-container {
+            display: flex;
+            gap: 0.75rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .thumb-img {
+            width: 70px;
+            height: 70px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid transparent;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .thumb-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .thumb-img.active {
+            border-color: var(--primary);
+            box-shadow: var(--glow);
+        }
+
+        /* Product Details Column */
+        .details-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .promo-tag {
+            align-self: flex-start;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(167, 139, 250, 0.15));
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: #c084fc;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.35rem 0.85rem;
+            border-radius: 6px;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+
+        .product-title {
+            font-family: var(--font-display);
+            font-size: 2.25rem;
+            font-weight: 800;
+            line-height: 1.2;
+            color: #fff;
+        }
+
+        .rating-summary {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .stars {
+            color: #fbbf24;
+            display: flex;
+            gap: 2px;
+        }
+
+        .rating-text {
+            color: var(--text-secondary);
+        }
+
+        /* Pricing Box */
+        .price-box {
+            background: linear-gradient(135deg, rgba(22, 28, 45, 0.8), rgba(18, 24, 38, 0.8));
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .current-price {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .compare-price {
+            font-size: 1.4rem;
+            color: var(--text-secondary);
+            text-decoration: line-through;
+        }
+
+        .discount-badge {
+            background: var(--accent-orange);
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            text-transform: uppercase;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Bullet Features list */
+        .quick-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin: 0.5rem 0;
+        }
+
+        .quick-features li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        .quick-features li svg {
+            flex-shrink: 0;
+            color: var(--accent);
+            margin-top: 2px;
+        }
+
+        /* Guarantee Badges */
+        .guarantee-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        .guarantee-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            padding: 0.75rem;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .guarantee-item svg {
+            color: var(--primary);
+        }
+
+        .guarantee-item span {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        /* Conversion Checkout Form (COD) */
+        .checkout-card {
+            background: linear-gradient(180deg, rgba(26, 32, 53, 0.9) 0%, rgba(18, 24, 38, 0.9) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.25);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--glow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .checkout-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .checkout-title {
+            font-family: var(--font-display);
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkout-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(11, 15, 25, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: #fff;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn-checkout {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent-orange), #ff9f43);
+            border: none;
+            color: #fff;
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 700;
+            padding: 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-checkout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(249, 115, 22, 0.5);
+            background: linear-gradient(135deg, #ff822d, #ffae57);
+        }
+
+        .btn-checkout:active {
+            transform: translateY(0);
+        }
+
+        /* Detailed Information Section */
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: var(--primary);
+            margin: 0.75rem auto 0 auto;
+            border-radius: 2px;
+        }
+
+        .details-section {
+            background: rgba(255, 255, 255, 0.01);
+            border-top: 1px solid var(--border-color);
+            padding: 5rem 0;
+        }
+
+        .description-content {
+            max-width: 800px;
+            margin: 0 auto 3.5rem auto;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+
+        .description-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        .description-content strong {
+            color: #fff;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+        }
+
+        @media (min-width: 768px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 1.75rem;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: var(--glow);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            margin-bottom: 1.25rem;
+        }
+
+        .feature-title {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-desc {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        /* Video Showcase */
+        .video-showcase {
+            max-width: 800px;
+            margin: 0 auto;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            background: #000;
+        }
+
+        .video-showcase video {
+            width: 100%;
+            display: block;
+        }
+
+        /* Social Proof / Reviews Section */
+        .reviews-section {
+            padding: 5rem 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .reviews-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .review-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .reviewer-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .reviewer-name {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .reviewer-location {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .review-comment {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            font-style: italic;
+        }
+
+        .review-footer {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .verified-badge {
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Footer */
+        footer {
+            background: #060911;
+            border-top: 1px solid var(--border-color);
+            padding: 3rem 1.5rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .footer-logo {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 1rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .footer-logo span {
+            color: var(--primary);
+        }
+
+        /* Modal styling */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: var(--glass-blur);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1.5rem;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            max-width: 480px;
+            width: 100%;
+            padding: 2.5rem;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(16, 185, 129, 0.2);
+            animation: scaleUp 0.3s ease;
+        }
+
+        @keyframes scaleUp {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-success-icon {
+            width: 72px;
+            height: 72px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            margin: 0 auto 1.5rem auto;
+            border: 2px solid var(--accent);
+        }
+
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 0.75rem;
+        }
+
+        .modal-text {
+            color: var(--text-secondary);
+            margin-bottom: 1.75rem;
+            font-size: 0.95rem;
+        }
+
+        .btn-modal-close {
+            background: var(--accent);
+            border: none;
+            color: #fff;
+            padding: 0.75rem 2rem;
+            font-family: var(--font-display);
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-modal-close:hover {
+            background: var(--accent-hover);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                    <polyline points="2 17 12 22 22 17"></polyline>
+                    <polyline points="2 12 12 17 22 12"></polyline>
+                </svg>
+                <span>PRIMELUXE</span>
+            </a>
+            <div class="nav-badge">
+                PHP Flash Sale ₱
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Main Product Section -->
+        <section class="product-grid">
+            
+            <!-- Left: Media Carousel & Thumbnails -->
+            <div class="media-container">
+                <div class="carousel-wrapper">
+                    <div class="carousel-slides" id="carouselSlides">
+                        {% for img in carousel_images %}
+                        <div class="carousel-slide">
+                            <img src="{{ img.get_url }}" alt="{{ img.alt_text|default:product.title }}">
+                        </div>
+                        {% empty %}
+                        <!-- Fallback standard image if none provided -->
+                        <div class="carousel-slide">
+                            <img src="https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=800&auto=format&fit=crop" alt="AeroGlide Max Pro">
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if carousel_images|length > 1 %}
+                    <button class="carousel-btn carousel-btn-prev" id="carouselPrevBtn" aria-label="Previous Slide">
+                        &#10094;
+                    </button>
+                    <button class="carousel-btn carousel-btn-next" id="carouselNextBtn" aria-label="Next Slide">
+                        &#10095;
+                    </button>
+                    <div class="carousel-dots" id="carouselDots">
+                        {% for img in carousel_images %}
+                        <button class="carousel-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}" aria-label="Slide {{ forloop.counter }}"></button>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Thumbnails -->
+                {% if carousel_images|length > 1 %}
+                <div class="thumb-container">
+                    {% for img in carousel_images %}
+                    <div class="thumb-img {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}">
+                        <img src="{{ img.get_url }}" alt="Thumbnail {{ forloop.counter }}">
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Right: Details, Pricing & Conversion Checkout Form -->
+            <div class="details-wrapper">
+                <div class="promo-tag">COD Philippines Available</div>
+                
+                <h1 class="product-title">{{ product.title }}</h1>
+                
+                <div class="rating-summary">
+                    <div class="stars">
+                        {% for i in "12345" %}
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                        </svg>
+                        {% endfor %}
+                    </div>
+                    <span class="rating-text">4.9/5.0 Stars (280+ Happy Filipino Customers)</span>
+                </div>
+
+                <!-- Pricing Box -->
+                <div class="price-box">
+                    <span class="current-price">{{ product.formatted_price }}</span>
+                    {% if product.formatted_compare_at_price %}
+                    <span class="compare-price">{{ product.formatted_compare_at_price }}</span>
+                    <span class="discount-badge">Save {{ product.discount_percentage }}% Off</span>
+                    {% endif %}
+                </div>
+
+                <!-- Short bullets -->
+                <ul class="quick-features">
+                    {% for feature in product.features_list|slice:":3" %}
+                    <li>
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span>{{ feature }}</span>
+                    </li>
+                    {% empty %}
+                    <li>
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span>High-Quality Premium Construction & Quality Assurance</span>
+                    </li>
+                    <li>
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span>Top Rated Product Globally for Performance & Design</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+
+                <!-- Guarantees -->
+                <div class="guarantee-grid">
+                    <div class="guarantee-item">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                        <span>100% Secure</span>
+                    </div>
+                    <div class="guarantee-item">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <rect x="1" y="3" width="15" height="13"></rect>
+                            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                            <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                            <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                        </svg>
+                        <span>COD Cash On Delivery</span>
+                    </div>
+                    <div class="guarantee-item">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                            <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                        <span>7-Day Warranty</span>
+                    </div>
+                </div>
+
+                <!-- Instant COD Checkout Card -->
+                <div class="checkout-card" id="checkoutSection">
+                    <h3 class="checkout-title">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
+                        </svg>
+                        Order Form (Cash on Delivery)
+                    </h3>
+                    <p class="checkout-subtitle">Fill out details below for free shipping & COD. Pay only when you receive it!</p>
+                    
+                    <form id="codOrderForm" onsubmit="handleFormSubmit(event)">
+                        <div class="form-group">
+                            <label for="fullName">Full Name</label>
+                            <input type="text" id="fullName" class="form-control" placeholder="Juan Dela Cruz" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phoneNumber">Mobile Number (Active)</label>
+                            <input type="tel" id="phoneNumber" class="form-control" placeholder="0917XXXXXXX" pattern="^(09|\+639)\d{9}$" title="Please enter a valid Philippine mobile number (e.g., 09171234567)" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="shippingAddress">Complete Delivery Address</label>
+                            <input type="text" id="shippingAddress" class="form-control" placeholder="House/Bldg No., Street Name, Barangay" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="city">City / Municipality</label>
+                                <input type="text" id="city" class="form-control" placeholder="Metro Manila / City" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="province">Province</label>
+                                <input type="text" id="province" class="form-control" placeholder="Rizal / Cavite / Cebu" required>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn-checkout" id="submitBtn">
+                            CONFIRM COD ORDER NOW
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Product Detailed Description & Embedded Video -->
+        <section class="details-section">
+            <h2 class="section-title">Why Choose AeroGlide?</h2>
+            
+            <div class="description-content">
+                {{ product.description|safe }}
+            </div>
+
+            <!-- Features Grid from JSON -->
+            <div class="features-grid">
+                {% for feature in product.features_list %}
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Dynamic Feature {{ forloop.counter }}</h3>
+                    <p class="feature-desc">{{ feature }}</p>
+                </div>
+                {% empty %}
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Lag-Free Transmission</h3>
+                    <p class="feature-desc">Engineered with high performance protocols to ensure no input lag during intensive professional use.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Pure Comfort Shell</h3>
+                    <p class="feature-desc">Meticulously crafted curves that alleviate wrist strain and provide all-day comfort for developers and power users.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Video Player Showcase -->
+            {% if product.video_url %}
+            <h2 class="section-title">Watch AeroGlide in Action</h2>
+            <div class="video-showcase">
+                <video controls preload="metadata" playsinline muted>
+                    <source src="{{ product.video_url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            {% endif %}
+
+        </section>
+
+        <!-- Social Proof / Reviews Section -->
+        <section class="reviews-section">
+            <h2 class="section-title">What Our Customers Say</h2>
+            <div class="reviews-grid">
+                {% for review in reviews %}
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <span class="reviewer-name">{{ review.name }}</span>
+                            <span class="reviewer-location">{{ review.location }}, PH</span>
+                        </div>
+                        <div class="stars">
+                            {% for i in "12345"|slice:review.rating %}
+                            <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <p class="review-comment">"{{ review.comment }}"</p>
+                    <div class="review-footer">
+                        <span>{{ review.date }}</span>
+                        <div class="verified-badge">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Verified Buyer
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="modal-success-icon">
+                <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+            <h4 class="modal-title">Order Received!</h4>
+            <p class="modal-text">Salamat! Your Cash on Delivery order has been successfully placed. We will send a confirmation SMS to your number shortly.</p>
+            <button class="btn-modal-close" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <a href="#" class="footer-logo">
+            PRIMELUXE<span>.</span>
+        </a>
+        <p>&copy; 2026 PrimeLuxe Philippines Storefront. All rights reserved.</p>
+        <p style="font-size: 0.75rem; margin-top: 0.5rem; color: var(--text-secondary);">CJ Sync Enabled | High Performance Dropshipping Engine</p>
+    </footer>
+
+    <!-- Interactive Scripts -->
+    <script>
+        // Carousel Functionality
+        const slides = document.getElementById('carouselSlides');
+        const dots = document.querySelectorAll('.carousel-dot');
+        const thumbs = document.querySelectorAll('.thumb-img');
+        const totalSlides = {{ carousel_images|length|default:1 }};
+        let currentSlide = 0;
+
+        function updateCarousel(index) {
+            currentSlide = index;
+            
+            // Limit checks
+            if(currentSlide < 0) currentSlide = totalSlides - 1;
+            if(currentSlide >= totalSlides) currentSlide = 0;
+
+            // Slide transition
+            slides.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+            // Update active dot
+            dots.forEach((dot, idx) => {
+                if(idx === currentSlide) dot.classList.add('active');
+                else dot.classList.remove('active');
+            });
+
+            // Update active thumbnail
+            thumbs.forEach((thumb, idx) => {
+                if(idx === currentSlide) thumb.classList.add('active');
+                else thumb.classList.remove('active');
+                
+                // Scroll thumbnail into view
+                if(idx === currentSlide) {
+                    thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                }
+            });
+        }
+
+        // Event listeners for Buttons
+        const prevBtn = document.getElementById('carouselPrevBtn');
+        const nextBtn = document.getElementById('carouselNextBtn');
+
+        if(prevBtn && nextBtn) {
+            prevBtn.addEventListener('click', () => {
+                updateCarousel(currentSlide - 1);
+            });
+
+            nextBtn.addEventListener('click', () => {
+                updateCarousel(currentSlide + 1);
+            });
+        }
+
+        // Event listeners for Dots
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const idx = parseInt(dot.getAttribute('data-index'));
+                updateCarousel(idx);
+            });
+        });
+
+        // Event listeners for Thumbnails
+        thumbs.forEach(thumb => {
+            thumb.addEventListener('click', () => {
+                const idx = parseInt(thumb.getAttribute('data-index'));
+                updateCarousel(idx);
+            });
+        });
+
+        // Form Submit & Modal
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'PLACING ORDER...';
+
+            setTimeout(() => {
+                // Show success modal
+                const modal = document.getElementById('successModal');
+                modal.style.display = 'flex';
+                
+                // Reset form
+                document.getElementById('codOrderForm').reset();
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'CONFIRM COD ORDER NOW <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>';
+            }, 1200);
+        }
+
+        function closeModal() {
+            document.getElementById('successModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
