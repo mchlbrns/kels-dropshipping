@@ -10,10 +10,21 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env file if it exists
+env_path = BASE_DIR / '.env'
+if env_path.exists():
+    with open(env_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('#') and '=' in line:
+                key, val = line.split('=', 1)
+                os.environ.setdefault(key.strip(), val.strip())
 
 
 # Quick-start development settings - unsuitable for production
@@ -130,3 +141,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Custom Store localization
 DEFAULT_CURRENCY_SYMBOL = '₱'
 DEFAULT_CURRENCY_CODE = 'PHP'
+
+# CJ Dropshipping configuration
+CJ_API_KEY = os.environ.get('CJ_API_KEY', '')
+CJ_ACCESS_TOKEN = os.environ.get('CJ_ACCESS_TOKEN', '')
+CJ_USE_SANDBOX = os.environ.get('CJ_USE_SANDBOX', 'True').lower() == 'true'
+

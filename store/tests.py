@@ -233,3 +233,78 @@ class AdminDashboardTestCase(TestCase):
         self.assertEqual(breakdown[1]['title'], "Keyboard")
         self.assertEqual(breakdown[1]['count'], 1)
         self.assertEqual(breakdown[1]['revenue'], "₱2,000.00")
+
+
+from store.admin import OrderAdmin, ProductAdmin
+from django.contrib.admin.sites import AdminSite
+
+class OrderFulfillmentFidelityTestCase(TestCase):
+    def setUp(self):
+        self.site = AdminSite()
+        self.product = Product.objects.create(
+            title="Promo Mouse",
+            price=1500.00,
+            sku="PM-01",
+            cj_product_id="CJ-TEST-ID",
+            is_active=True
+        )
+        self.order = Order.objects.create(
+            product=self.product,
+            full_name="Maria Santos",
+            phone_number="09187654321",
+            shipping_address="Quezon City, Metro Manila"
+        )
+
+    def test_default_fulfillment_status(self):
+        """Verify new orders have pending status."""
+        self.assertEqual(self.order.fulfillment_status, 'pending')
+        self.assertIsNone(self.order.cj_order_id)
+        self.assertIsNone(self.order.fulfilled_at)
+        self.assertIsNone(self.order.fulfillment_error)
+
+    def test_order_admin_fulfillment_action(self):
+        """Verify the OrderAdmin fulfill_with_cj action works."""
+        order_admin = OrderAdmin(Order, self.site)
+        queryset = Order.objects.filter(id=self.order.id)
+        
+        # Mock message_user to avoid message storage configuration errors
+        messages_received = []
+        order_admin.message_user = lambda request, message, level='INFO', **kwargs: messages_received.append((message, level))
+        
+        class MockRequest:
+            pass
+        req = MockRequest()
+        
+        order_admin.fulfill_with_cj(req, queryset)
+        
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.fulfillment_status, 'fulfilled')
+        self.assertIsNotNone(self.order.cj_order_id)
+        self.assertIsNotNone(self.order.fulfilled_at)
+        self.assertIsNone(self.order.fulfillment_error)
+        self.assertEqual(len(messages_received), 1)
+
+    def test_product_admin_sync_action(self):
+        """Verify the ProductAdmin sync_with_cj action works."""
+        product_admin = ProductAdmin(Product, self.site)
+        queryset = Product.objects.filter(id=self.product.id)
+        
+        # Mock message_user to avoid message storage configuration errors
+        messages_received = []
+        product_admin.message_user = lambda request, message, level='INFO', **kwargs: messages_received.append((message, level))
+        
+        class MockRequest:
+            pass
+        req = MockRequest()
+        
+        self.product.price = 500.00
+        self.product.save()
+        
+        product_admin.sync_with_cj(req, queryset)
+        
+        self.product.refresh_from_db()
+        self.assertEqual(self.product.price, 1899.00)
+        self.assertEqual(self.product.sku, "AG-MAX-PRO-01")
+        self.assertEqual(len(messages_received), 1)
+
+

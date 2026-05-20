@@ -79,7 +79,44 @@ class ProductAdmin(admin.ModelAdmin):
         }),
     )
 
-    actions = ['duplicate_products', 'toggle_active_status']
+    actions = ['duplicate_products', 'toggle_active_status', 'sync_with_cj']
+
+    @admin.action(description="Sync selected products with CJ Dropshipping")
+    def sync_with_cj(self, request, queryset):
+        from store.dropshipping import CJDropshippingClient
+        from django.conf import settings
+        
+        client = CJDropshippingClient(
+            api_key=getattr(settings, 'CJ_API_KEY', ''),
+            access_token=getattr(settings, 'CJ_ACCESS_TOKEN', ''),
+            use_sandbox=getattr(settings, 'CJ_USE_SANDBOX', True)
+        )
+        
+        success_count = 0
+        failed_count = 0
+        
+        for product in queryset:
+            if not product.cj_product_id:
+                failed_count += 1
+                continue
+                
+            res = client.sync_product(product.cj_product_id)
+            if res.get('success'):
+                product.sku = res.get('sku', product.sku)
+                if 'price' in res:
+                    product.price = res['price']
+                if 'compare_at_price' in res:
+                    product.compare_at_price = res['compare_at_price']
+                product.save()
+                success_count += 1
+            else:
+                failed_count += 1
+                
+        if success_count > 0:
+            self.message_user(request, f"Successfully synchronized {success_count} product(s) with CJ.")
+        if failed_count > 0:
+            self.message_user(request, f"Failed to sync {failed_count} product(s) (missing CJ ID or API error).", level='WARNING')
+
 
     @admin.display(description="Price (₱)")
     def formatted_price_display(self, obj):
@@ -155,10 +192,10 @@ class FAQAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'product', 'full_name', 'phone_number', 'created_at')
-    list_filter = ('created_at', 'product')
-    search_fields = ('full_name', 'phone_number', 'shipping_address', 'product__title')
-    readonly_fields = ('created_at',)
+    list_display = ('id', 'product', 'full_name', 'phone_number', 'fulfillment_status_badge', 'cj_order_id', 'created_at')
+    list_filter = ('fulfillment_status', 'created_at', 'product')
+    search_fields = ('full_name', 'phone_number', 'shipping_address', 'product__title', 'cj_order_id')
+    readonly_fields = ('created_at', 'fulfilled_at', 'fulfillment_error')
     change_list_template = 'admin/store/order/change_list.html'
     
     fieldsets = (
@@ -168,7 +205,66 @@ class OrderAdmin(admin.ModelAdmin):
         ('Customer Details', {
             'fields': ('full_name', 'phone_number', 'shipping_address'),
         }),
+        ('CJ Dropshipping Sync', {
+            'fields': ('fulfillment_status', 'cj_order_id', 'fulfillment_error', 'fulfilled_at'),
+            'description': "Automated dropshipping integration and dispatch details."
+        }),
     )
+
+    actions = ['fulfill_with_cj']
+
+    @admin.display(description="Fulfillment Status")
+    def fulfillment_status_badge(self, obj):
+        from django.utils.html import format_html
+        colors = {
+            'pending': ('#f59e0b', '#fef3c7', 'border-amber-200'),
+            'fulfilled': ('#10b981', '#d1fae5', 'border-emerald-200'),
+            'failed': ('#ef4444', '#fee2e2', 'border-red-200'),
+        }
+        color, bg, border = colors.get(obj.fulfillment_status, ('#6b7280', '#f3f4f6', 'border-gray-200'))
+        return format_html(
+            '<span class="px-2.5 py-0.5 rounded-full text-xs font-bold border" style="color: {}; background-color: {}; border-color: {}">{}</span>',
+            color, bg, border, obj.get_fulfillment_status_display()
+        )
+
+    @admin.action(description="Fulfill selected orders with CJ Dropshipping")
+    def fulfill_with_cj(self, request, queryset):
+        from store.dropshipping import CJDropshippingClient
+        from django.conf import settings
+        from django.utils import timezone
+        
+        client = CJDropshippingClient(
+            api_key=getattr(settings, 'CJ_API_KEY', ''),
+            access_token=getattr(settings, 'CJ_ACCESS_TOKEN', ''),
+            use_sandbox=getattr(settings, 'CJ_USE_SANDBOX', True)
+        )
+        
+        success_count = 0
+        failed_count = 0
+        
+        for order in queryset:
+            if order.fulfillment_status == 'fulfilled':
+                continue
+                
+            res = client.forward_order(order)
+            if res.get('success'):
+                order.fulfillment_status = 'fulfilled'
+                order.cj_order_id = res.get('cj_order_id')
+                order.fulfilled_at = timezone.now()
+                order.fulfillment_error = None
+                order.save()
+                success_count += 1
+            else:
+                order.fulfillment_status = 'failed'
+                order.fulfillment_error = res.get('error', 'Unknown error occurred')
+                order.save()
+                failed_count += 1
+                
+        if success_count > 0:
+            self.message_user(request, f"Successfully fulfilled {success_count} order(s) via CJ Dropshipping.")
+        if failed_count > 0:
+            self.message_user(request, f"Failed to fulfill {failed_count} order(s). Check error details in order admin.", level='ERROR')
+
 
     def changelist_view(self, request, extra_context=None):
         response = super().changelist_view(request, extra_context=extra_context)

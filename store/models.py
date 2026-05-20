@@ -199,6 +199,12 @@ class ProductImage(models.Model):
 
 
 class Order(models.Model):
+    FULFILLMENT_CHOICES = [
+        ('pending', 'Pending'),
+        ('fulfilled', 'Fulfilled'),
+        ('failed', 'Failed'),
+    ]
+
     product = models.ForeignKey(
         Product, 
         on_delete=models.CASCADE, 
@@ -216,6 +222,31 @@ class Order(models.Model):
     shipping_address = models.TextField(
         verbose_name="Complete Delivery Address"
     )
+    fulfillment_status = models.CharField(
+        max_length=20,
+        choices=FULFILLMENT_CHOICES,
+        default='pending',
+        verbose_name="Fulfillment Status",
+        help_text="Fulfillment status on CJ Dropshipping"
+    )
+    cj_order_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name="CJ Order ID",
+        help_text="Order ID returned by CJ Dropshipping after successful automated submission"
+    )
+    fulfillment_error = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Fulfillment Error Details",
+        help_text="Detailed error message if the CJ fulfillment sync failed"
+    )
+    fulfilled_at = models.DateTimeField(
+        blank=True,
+        null=True,
+        verbose_name="Fulfilled At"
+    )
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name="Order Date"
@@ -228,6 +259,7 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order #{self.id} for {self.product.title} by {self.full_name}"
+
 
 
 class Review(models.Model):
